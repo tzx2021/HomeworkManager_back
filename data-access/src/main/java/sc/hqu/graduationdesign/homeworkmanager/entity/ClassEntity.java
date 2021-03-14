@@ -17,6 +17,11 @@ public class ClassEntity {
     private Integer id;
 
     /**
+     * 班主任（教工号）
+     */
+    private Integer headTeacherNo;
+
+    /**
      * 班级编号
      */
     private String classCode;

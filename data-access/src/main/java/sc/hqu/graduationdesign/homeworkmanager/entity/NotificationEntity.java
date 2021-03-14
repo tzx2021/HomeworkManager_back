@@ -16,6 +16,11 @@ public class NotificationEntity {
     private Long id;
 
     /**
+     * 系统账号
+     */
+    private Long account;
+
+    /**
      * 通知标题
      */
     private String title;
@@ -39,5 +44,10 @@ public class NotificationEntity {
      * 已读数量，与通知成员数量相对应
      */
     private Integer totalRead;
+
+    /**
+     * 附件url，多个附件使用逗号','隔开
+     */
+    private String attachmentUrl;
 
 }

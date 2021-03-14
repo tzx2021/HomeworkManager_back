@@ -16,6 +16,11 @@ public class ParentEntity {
     private Integer id;
 
     /**
+     * 学生学号
+     */
+    private Integer studentNo;
+
+    /**
      * 家长姓名
      */
     private String name;
