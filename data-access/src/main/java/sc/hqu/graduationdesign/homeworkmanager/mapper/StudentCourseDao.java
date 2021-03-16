@@ -22,8 +22,8 @@ public interface StudentCourseDao {
 
     /**
      * 批量删除学生课程信息记录
-     * @param studentNoList     学生学号集合
+     * @param idList     关联记录id集合
      */
-    void batchDeleteStudentCourse(@Param("studentNoList") List<Long> studentNoList);
+    void batchDeleteStudentCourse(@Param("idList") List<Long> idList);
 
 }

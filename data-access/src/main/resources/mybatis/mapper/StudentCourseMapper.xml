@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="sc.hqu.graduationdesign.homeworkmanager.mapper.StudentCourseDao">
+
+
+    <insert id="batchInsertStudentCourse">
+        insert into t_student_course(student_no,course_id) values
+        <foreach collection="studentCourseEntities" item="sce" separator=",">
+            (#{sce.studentNo},#{sce.courseId})
+        </foreach>
+    </insert>
+    <delete id="batchDeleteStudentCourse">
+        delete from t_student_course where id in
+        <foreach collection="idList" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

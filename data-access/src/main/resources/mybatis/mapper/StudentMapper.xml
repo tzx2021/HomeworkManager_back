@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="sc.hqu.graduationdesign.homeworkmanager.mapper.StudentDao">
+
+    <insert id="batchInsertStudent">
+        insert into t_student(student_no,`name`,gender,contact,email,social_account) values
+        <foreach collection="ses" item="se" separator=",">
+            (#{se.studentNo},#{se.name},#{se.gender},#{se.contact},#{se.email},#{se.socialAccount})
+        </foreach>
+    </insert>
+
+</mapper>
