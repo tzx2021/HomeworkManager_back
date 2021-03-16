@@ -13,7 +13,7 @@ public class ParentEntity {
     /**
      * 家长id
      */
-    private Integer id;
+    private Long id;
 
     /**
      * 学生学号

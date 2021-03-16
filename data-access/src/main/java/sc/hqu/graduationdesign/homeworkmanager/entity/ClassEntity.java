@@ -14,12 +14,12 @@ public class ClassEntity {
     /**
      * 班级id
      */
-    private Integer id;
+    private Long id;
 
     /**
      * 班主任（教工号）
      */
-    private Integer headTeacherNo;
+    private Long headTeacherNo;
 
     /**
      * 班级编号
@@ -35,5 +35,10 @@ public class ClassEntity {
      * 学生总数
      */
     private Integer totalStudentNum;
+
+    /**
+     * 班级创建日期时间戳
+     */
+    private Long createDate;
 
 }

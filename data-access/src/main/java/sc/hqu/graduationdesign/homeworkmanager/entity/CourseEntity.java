@@ -13,7 +13,7 @@ public class CourseEntity {
     /**
      * 课程id
      */
-    private Integer id;
+    private Long id;
 
     /**
      * 课程名称
@@ -23,7 +23,7 @@ public class CourseEntity {
     /**
      * 学分
      */
-    private float credit;
+    private Float credit;
 
     /**
      * 上课时间
@@ -34,5 +34,10 @@ public class CourseEntity {
      * 课程周期，单位为周
      */
     private Integer coursePeriod;
+
+    /**
+     * 课程创建日期时间戳
+     */
+    private Long createDate;
 
 }

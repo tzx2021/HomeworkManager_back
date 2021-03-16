@@ -3,12 +3,12 @@ package sc.hqu.graduationdesign.homeworkmanager.model;
 import lombok.Data;
 
 /**
- * 学生通信录视图模型类
+ * 班级学生视图模型类
  * @author tzx
  * @date 2021-03-14 2:27
  */
 @Data
-public class StudentContactListView {
+public class ClassStudentView {
 
     /**
      * 班级id
@@ -24,6 +24,11 @@ public class StudentContactListView {
      * 学生姓名
      */
     private String name;
+
+    /**
+     * 学生性别，0表示女生，1表示男生
+     */
+    private Integer gender;
 
     /**
      * 联系方式（手机号）

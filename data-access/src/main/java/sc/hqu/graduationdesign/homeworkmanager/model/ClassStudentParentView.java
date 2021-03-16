@@ -8,7 +8,7 @@ import lombok.Data;
  * @date 2021-03-14 2:30
  */
 @Data
-public class ParentContactListView {
+public class ClassStudentParentView {
 
     /**
      * 班级id
@@ -29,6 +29,11 @@ public class ParentContactListView {
      * 家长姓名
      */
     private String name;
+
+    /**
+     * 家长性别
+     */
+    private Integer gender;
 
     /**
      * 联系方式

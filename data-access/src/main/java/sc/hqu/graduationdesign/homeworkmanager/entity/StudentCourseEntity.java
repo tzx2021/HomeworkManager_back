@@ -11,9 +11,14 @@ import lombok.Data;
 public class StudentCourseEntity {
 
     /**
+     * 表id
+     */
+    private Long id;
+
+    /**
      * 课程id
      */
-    private Integer courseId;
+    private Long courseId;
 
     /**
      * 学生学号
