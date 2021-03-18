@@ -9,15 +9,17 @@
         <outputRelativeToContentRoot value="true" />
         <module name="business" />
         <module name="common" />
+        <module name="message-publisher-spring-boot-starter" />
+        <module name="redis-cache-spring-boot-starter" />
         <module name="web-api" />
         <module name="data-access" />
-        <module name="support" />
-        <module name="third-party" />
+        <module name="spi" />
         <module name="authentication" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="dao" target="8" />
+      <module name="third-party" target="8" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
@@ -27,6 +29,9 @@
       <module name="common" options="-parameters" />
       <module name="dao" options="-parameters" />
       <module name="data-access" options="-parameters" />
+      <module name="message-publisher-spring-boot-starter" options="-parameters" />
+      <module name="redis-cache-spring-boot-starter" options="-parameters" />
+      <module name="spi" options="-parameters" />
       <module name="support" options="-parameters" />
       <module name="third-party" options="-parameters" />
       <module name="web-api" options="-parameters" />

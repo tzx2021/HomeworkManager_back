@@ -1,0 +1,11 @@
+package sc.hqu.graduationdesign.homeworkmanager.common;
+
+/**
+ * @author tzx
+ * @date 2021-03-19 2:54
+ */
+public interface NotificationCheckingService {
+
+
+
+}

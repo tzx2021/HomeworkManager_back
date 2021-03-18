@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  sc.hqu.graduationdesign.homeworkmanager.config.RedisCacheProviderAutoConfigure,\
+  sc.hqu.graduationdesign.homeworkmanager.provider.RedisCacheProvider

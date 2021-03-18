@@ -1,0 +1,8 @@
+{
+  "properties": [
+    {
+      "name": "dubbo.enable",
+      "type": "java.lang.Boolean",
+      "description": "dubbo配置类加载开关."
+  }
+] }

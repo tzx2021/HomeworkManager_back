@@ -18,11 +18,11 @@
     <modules>
         <module>business</module>
         <module>support</module>
-        <module>third-party</module>
         <module>authentication</module>
         <module>web-api</module>
         <module>common</module>
         <module>data-access</module>
+        <module>spi</module>
     </modules>
 
     <properties>
@@ -39,6 +39,12 @@
 
 
     <dependencies>
+        <!--spring-boot配置处理-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
         <!--Spring boot Web容器-->
         <dependency>
             <groupId>org.springframework.boot</groupId>

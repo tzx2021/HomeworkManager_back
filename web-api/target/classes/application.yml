@@ -12,5 +12,19 @@ spring:
       max-total: 20                                         # 最大连接数
       max-wait-millis: 1000                                 # 等待连接获取的最大超时时间
 
-dubbo:
-  enabled: false
+
+
+#自定义的消息发布starter模块配置
+message:
+  publish:
+    retry-flag: true
+    retry: 3
+    max-spin-time: 1000
+
+#rocketmq配置
+rocketmq:
+  name-server: 106.53.103.199:9876
+  producer:
+    group: default-group
+  consumer:
+    group: default-group

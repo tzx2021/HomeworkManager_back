@@ -1,0 +1,23 @@
+{
+  "properties": [
+    {
+      "name": "message.publish.retry",
+      "type": "java.lang.Integer",
+      "description": "消息发送失败时的重试次数."
+    },
+    {
+      "name": "message.publish.max-spin-time",
+      "type": "java.lang.Long",
+      "description": "等待消息发送回调结果的最大自旋时间，单位是ms."
+    },
+    {
+      "name": "rocketmq.consumer.group",
+      "type": "java.lang.String",
+      "description": "Description for rocketmq.consumer.group."
+    },
+    {
+      "name": "message.publish.retry-flag",
+      "type": "java.lang.Boolean",
+      "description": "是否开启消息重发."
+    }
+  ] }
