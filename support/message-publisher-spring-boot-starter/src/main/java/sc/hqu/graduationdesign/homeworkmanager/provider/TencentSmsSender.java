@@ -57,7 +57,7 @@ public class TencentSmsSender implements GenericShortMessageSendingProvider{
         try {
             tencentSmsClient.SendSms(sendSmsRequest);
         } catch (TencentCloudSDKException e) {
-            throw new MessageSendingException("Sms sending fail with tencent sms", e);
+            throw new MessageSendingException("Fail to send message with tencent sms", e);
         }
     }
 

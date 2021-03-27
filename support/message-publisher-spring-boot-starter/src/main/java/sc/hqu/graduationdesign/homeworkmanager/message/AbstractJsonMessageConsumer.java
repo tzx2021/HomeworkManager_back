@@ -50,13 +50,13 @@ public abstract class AbstractJsonMessageConsumer implements RocketMQListener<St
                 Map<String,String> attachmentObject = JSONObject.parseObject(attachmentData.toJSONString(), new TypeReference<Map<String,String>>(){});
                 notificationContext.setAttachment(attachmentObject);
             }
-            // 这里将会调用具体子类所实现的方法去处理该通知所需要的具体处理逻辑
-            // 由于子类会配置对应的@RocketMQMessageListener注解，因此父类不需要关系消息主题
-            // 只需要调用该方法，就会到对应的子类中去执行
-            // 实际上父类的onMessage方法是有具体的子类先触发调用的，所以再调用该抽象方法，
-            // 最终一定会回到该具体的子类中
-            processingNotification(notificationContext);
         }
+        // 这里将会调用具体子类所实现的方法去处理该通知所需要的具体处理逻辑
+        // 由于子类会配置对应的@RocketMQMessageListener注解，因此父类不需要关系消息主题
+        // 只需要调用该方法，就会到对应的子类中去执行
+        // 实际上父类的onMessage方法是有具体的子类先触发调用的，所以再调用该抽象方法，
+        // 最终一定会回到该具体的子类中
+        processingNotification(notificationContext);
     }
 
     /**

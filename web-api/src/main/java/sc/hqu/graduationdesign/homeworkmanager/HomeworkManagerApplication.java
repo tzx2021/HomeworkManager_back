@@ -1,5 +1,6 @@
 package sc.hqu.graduationdesign.homeworkmanager;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -9,6 +10,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @date 2021-03-12 15:58
  */
 @SpringBootApplication
+@MapperScan("sc.hqu.graduationdesign.homeworkmanager.mapper")
 public class HomeworkManagerApplication {
 
     public static void main(String[] args) {

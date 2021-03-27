@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Repository;
 import sc.hqu.graduationdesign.homeworkmanager.entity.SystemAccountEntity;
+import sc.hqu.graduationdesign.homeworkmanager.entity.TeacherEntity;
 
 /**
  * 系统账户信息数据访问接口
@@ -23,6 +24,14 @@ public interface SystemAccountDao {
      */
     @Select("select account,password,type,enable where t_system_account where account=#{tNo}")
     SystemAccountEntity queryByTeacherNo(Long tNo);
+
+    /**
+     * 通过教工号查询教师个人信息
+     * @param tNo       教工号
+     * @return          {@link TeacherEntity}
+     */
+    @Select("select teacher_no,name,gender,contact,address,job_title from t_teacher where teacher_no=#{tNo}")
+    TeacherEntity queryTeacherInfoByTeacherNo(Long tNo);
 
     /**
      * 更新账户登录密码

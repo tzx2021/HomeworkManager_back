@@ -1,3 +1,7 @@
+
+server:
+  port: 9090
+
 spring:
   #数据库配置
   datasource:
@@ -17,7 +21,7 @@ spring:
 #自定义的消息发布starter模块配置
 message:
   publish:
-    retry-flag: true
+    retry-flag: false
     retry: 3
     max-spin-time: 1000
 

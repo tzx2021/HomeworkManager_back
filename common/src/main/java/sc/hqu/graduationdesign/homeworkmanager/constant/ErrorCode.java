@@ -11,8 +11,18 @@ import lombok.Getter;
 @Getter
 public enum ErrorCode {
 
+    /**仅200时为服务成功*/
+    SUCCESS(200,"success"),
+
+    /**token鉴权相关的错误*/
+    INVALID_TOKEN(400,"凭证无效"),
+
     /** 系统全局异常错误码*/
-    MESSAGE_SENDING_ERROR(510,"短信发送失败");
+    MESSAGE_SENDING_ERROR(510,"短信发送失败"),
+    MESSAGE_PUBLISH_ERROR(511,"消息发布失败"),
+
+    USER_NOT_AVAILABLE(600, "用户不可用"),
+    USER_NOT_FOUND(601,"用户不存在");
 
     private final Integer code;
     private final String desc;

@@ -12,4 +12,8 @@ public class BusinessException extends Exception{
         super(errorCode.getDesc(),e);
     }
 
+    public BusinessException(ErrorCode errorCode){
+        super(errorCode.getDesc());
+    }
+
 }

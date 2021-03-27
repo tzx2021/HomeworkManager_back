@@ -82,11 +82,11 @@ public class MessagePublishAutoConfigure implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        LOG.info("enable message publisher autoconfiguration.");
+        LOG.info("Enable message publisher autoconfiguration.");
         if (retryFlag){
-            LOG.info("using retry-times: {} | using max-spin-time: {}", retryTimes,maxSpinTime);
+            LOG.info("Using retry-times: {} | using max-spin-time: {}", retryTimes,maxSpinTime);
         }else {
-            LOG.info("disable retry of message publishing");
+            LOG.info("Disable retry of message publishing");
         }
     }
 }

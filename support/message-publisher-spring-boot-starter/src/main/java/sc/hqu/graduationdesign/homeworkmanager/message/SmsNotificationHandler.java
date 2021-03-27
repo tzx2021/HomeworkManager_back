@@ -4,6 +4,7 @@ package sc.hqu.graduationdesign.homeworkmanager.message;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 import sc.hqu.graduationdesign.homeworkmanager.context.NotificationContext;
 import sc.hqu.graduationdesign.homeworkmanager.exceptions.MessageSendingException;
 import sc.hqu.graduationdesign.homeworkmanager.provider.GenericShortMessageSendingProvider;
@@ -28,6 +29,7 @@ public class SmsNotificationHandler extends AbstractJsonMessageConsumer {
 
     @Override
     public void processingNotification(NotificationContext notificationContext) {
+        System.out.println("===========================");
         Map<String, String> contactMap = notificationContext.getAttachment();
         String studentPrefix = "S";
         // 号码信息封装时需要约定，学生的号码会加上S作为前缀，例如：S_13131313131
