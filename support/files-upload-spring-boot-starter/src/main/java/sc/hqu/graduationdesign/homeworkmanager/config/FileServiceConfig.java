@@ -3,12 +3,15 @@ package sc.hqu.graduationdesign.homeworkmanager.config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.web.servlet.MultipartConfigFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.util.unit.DataSize;
 import sc.hqu.graduationdesign.homeworkmanager.provider.FtpServiceProvider;
 import sc.hqu.graduationdesign.homeworkmanager.provider.GenericFileServiceProvider;
 import javax.annotation.PostConstruct;
+import javax.servlet.MultipartConfigElement;
 
 /**
  * @author tzx
@@ -28,6 +31,16 @@ public class FileServiceConfig {
     @Bean
     public GenericFileServiceProvider fileServiceProvider(){
         return new FtpServiceProvider();
+    }
+
+    @Bean
+    public MultipartConfigElement multipartConfigElement(){
+        MultipartConfigFactory multipartConfigFactory=new MultipartConfigFactory();
+        // 设置单个文件最大大小为10M
+        multipartConfigFactory.setMaxFileSize(DataSize.ofMegabytes(10));
+        // 设置一次请求最大上传总大小为100M的文件
+        multipartConfigFactory.setMaxRequestSize(DataSize.ofMegabytes(100));
+        return multipartConfigFactory.createMultipartConfig();
     }
 
     public void setFileAccessPathPrefix(String fileAccessPathPrefix) {
