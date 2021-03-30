@@ -1,6 +1,5 @@
 package sc.hqu.graduationdesign.homeworkmanager.filter;
 
-import com.alibaba.fastjson.JSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -71,8 +70,13 @@ public class RequestAuthenticationFilter extends BasicAuthenticationFilter {
     }
 
     private boolean requiresAuthentication(HttpServletRequest request){
-        // 不在认证白名单的请求才需要进行认证，因此这里返回的是没有匹配命中的结果
-        return authWhiteRequestMatchers.stream().anyMatch(requestMatcher -> !requestMatcher.matches(request));
+        // 不在认证白名单的请求才需要进行认证，如果在白名单中匹配到了值，说明当前请求不需要鉴权
+        for (RequestMatcher requestMatcher : authWhiteRequestMatchers) {
+            if (requestMatcher.matches(request)){
+                return false;
+            }
+        }
+        return true;
     }
 
     private List<RequestMatcher> antMatchers(String...antPatterns){

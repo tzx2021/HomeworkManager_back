@@ -30,6 +30,7 @@ public class LoginAuthenticationFilter extends AbstractAuthenticationProcessingF
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException, ServletException {
+        // 登录必须使用post方式的表单提交
         if (!request.getMethod().equals(POST_KEY)){
             throw new AuthenticationServiceException("Authentication method not supported: " + request.getMethod());
         }else {

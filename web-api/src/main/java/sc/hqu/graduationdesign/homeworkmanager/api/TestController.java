@@ -2,11 +2,17 @@ package sc.hqu.graduationdesign.homeworkmanager.api;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import sc.hqu.graduationdesign.homeworkmanager.consumer.service.RocketMqServiceTest;
+import sc.hqu.graduationdesign.homeworkmanager.exceptions.FileUploadException;
 import sc.hqu.graduationdesign.homeworkmanager.model.NotificationMessage;
+import sc.hqu.graduationdesign.homeworkmanager.provider.FtpServiceProvider;
 import sc.hqu.graduationdesign.homeworkmanager.provider.GenericCacheProvider;
+import sc.hqu.graduationdesign.homeworkmanager.provider.GenericFileServiceProvider;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.FileNotFoundException;
 
 /**
  * @author tzx
@@ -18,8 +24,11 @@ public class TestController {
     @Autowired
     private RocketMqServiceTest serviceTest;
 
+    @Autowired
+    private GenericFileServiceProvider ftpServiceProvider;
 
-    @GetMapping(value = "/send")
+
+    @GetMapping(value = "/test/send")
     public String send(){
         serviceTest.publishMessage();
         return "success!";
@@ -28,7 +37,7 @@ public class TestController {
     @Autowired
     private GenericCacheProvider cacheProvider;
 
-    @GetMapping(value = "/redis")
+    @GetMapping(value = "/test/redis")
     public Object redisTest(){
         NotificationMessage message = new NotificationMessage();
         message.setType(1);
@@ -38,6 +47,21 @@ public class TestController {
         message.setPublishDate(System.currentTimeMillis());
         cacheProvider.setIfAbsent("test", message);
         return cacheProvider.get("test");
+    }
+
+
+    @CrossOrigin(origins = "*",maxAge = 3600)
+    @PostMapping(value = "/test/upload")
+    public String uploadTest(@RequestParam("file") MultipartFile file){
+        if (file != null){
+            try {
+                return ftpServiceProvider.upload(file);
+            } catch (FileUploadException e) {
+                e.printStackTrace();
+                return "fail to upload";
+            }
+        }
+        return "file is null";
     }
 
 }

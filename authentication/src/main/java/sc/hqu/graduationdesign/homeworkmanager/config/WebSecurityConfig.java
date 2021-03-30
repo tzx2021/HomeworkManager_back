@@ -7,6 +7,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -44,12 +45,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             "/webjars",
             "/images/**",
             "/css/**",
-            "/js/**"
+            "/js/**",
     };
 
     private final String[] defaultAuthWhiteList = {
             DEFAULT_LOGIN_URL,
-            DEFAULT_LOGOUT_URL
+            DEFAULT_LOGOUT_URL,
+            "/test/**"
     };
 
     /**
@@ -178,5 +180,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticationEntryPoint(authenticationEntryPoint())
                 // 权限拒绝处理器
                 .accessDeniedHandler(authAccessDeniedHandler());
+    }
+
+    /**
+     * 配置无视鉴权的公共路径
+     * @param web           {@link WebSecurity}
+     * @throws Exception    配置异常
+     */
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers(webIgnoringUrls);
     }
 }

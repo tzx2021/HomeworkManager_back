@@ -1,0 +1,40 @@
+{
+  "properties": [
+    {
+      "name": "ftp-server.hostname",
+      "type": "java.lang.String",
+      "description": "ftp文件服务器主机名."
+    },
+    {
+      "name": "ftp-server.port",
+      "type": "java.lang.Integer",
+      "defaultValue": 21,
+      "description": "ftp文件服务器服务连接端口，默认为21."
+    },
+    {
+      "name": "ftp-server.username",
+      "type": "java.lang.String",
+      "description": "ftp服务器登录名."
+    },
+    {
+      "name": "ftp-server.password",
+      "type": "java.lang.String",
+      "description": "ftp服务器登录密码."
+    },
+    {
+      "name": "ftp-server.dir",
+      "type": "java.lang.String",
+      "description": "ftp服务文件保存路径."
+    },
+    {
+      "name": "ftp-server.timeout",
+      "type": "java.lang.Integer",
+      "defaultValue": 120000,
+      "description": "ftp服务器连接超时时间，单位是ms，默认为120000ms."
+    },
+    {
+      "name": "ftp-server.file-access-path-prefix",
+      "type": "java.lang.String",
+      "description": "ftp文件服务器中文件访问的路径前缀，文件访问的方式为：前缀/文件名."
+    }
+  ] }
