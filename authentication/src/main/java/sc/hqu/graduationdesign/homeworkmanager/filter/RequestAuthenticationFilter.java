@@ -1,5 +1,8 @@
 package sc.hqu.graduationdesign.homeworkmanager.filter;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -13,6 +16,7 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.util.StringUtils;
 import sc.hqu.graduationdesign.homeworkmanager.constant.ErrorCode;
 import sc.hqu.graduationdesign.homeworkmanager.model.RequestAuthenticationToken;
+import sc.hqu.graduationdesign.homeworkmanager.utils.JwtUtil;
 import sc.hqu.graduationdesign.homeworkmanager.utils.ResponseUtil;
 
 import javax.servlet.FilterChain;
@@ -46,23 +50,28 @@ public class RequestAuthenticationFilter extends BasicAuthenticationFilter {
         if (this.requiresAuthentication(request)){
             // 与前端进行约定，将token信息放置在请求头的Authorization属性中
             String token = request.getHeader("Authorization");
-            if (!StringUtils.hasLength(token)){
-                LOG.error("请求token无效，拒绝访问: {}",request.getRequestURI());
-                // token为空直接返回400-凭证无效的错误
-                ResponseUtil.writeJson(response, ErrorCode.INVALID_TOKEN);
-                return;
-            }else {
+            // 这里如果做得严谨些，还应该进行jwt验签，防止假凭证跳过校验
+            if (StringUtils.hasLength(token)){
                 try {
+                    JwtUtil.parse(token);
                     // 封装为请求鉴权认证的token对象，进行后续的认证流程
                     RequestAuthenticationToken requestToken = new RequestAuthenticationToken(token);
                     // 需要封装为spring-security规定的认证接口对象
                     Authentication authentication = this.getAuthenticationManager().authenticate(requestToken);
                     // 保存到上下文对象中，方便在其他地方获取该认证对象
                     SecurityContextHolder.getContext().setAuthentication(authentication);
-                }catch (AuthenticationException e){
+                }catch (ExpiredJwtException | MalformedJwtException | SignatureException |IllegalArgumentException e){
+                    LOG.error("请求token进行JWT验签失败，无效token，拒绝访问: {}",request.getRequestURI());
+                    ResponseUtil.writeJson(response,ErrorCode.INVALID_TOKEN);
+                } catch (AuthenticationException e){
                     this.getAuthenticationEntryPoint().commence(request,response,e);
                     return;
                 }
+            }else {
+                LOG.error("请求token无效，拒绝访问: {}",request.getRequestURI());
+                // token为空直接返回400-凭证无效的错误
+                ResponseUtil.writeJson(response, ErrorCode.INVALID_TOKEN);
+                return;
             }
         }
         // 传递过滤链

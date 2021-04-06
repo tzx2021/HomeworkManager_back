@@ -25,6 +25,9 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public boolean upload(MultipartFile file) {
+
+        // TODO: 2021/4/3  上传成功需要返回文件的id
+
         try {
             // 原始的文件名称是保存到数据库中的
             String originalFilename = file.getOriginalFilename();

@@ -82,4 +82,8 @@ public class JwtUtil {
         return jws.getBody();
     }
 
+    public void verifyJwt(String jwt) {
+        Jwts.parser().setSigningKey(BASE64_ENCODED_SECRET_KEY).parse(jwt);
+    }
+
 }

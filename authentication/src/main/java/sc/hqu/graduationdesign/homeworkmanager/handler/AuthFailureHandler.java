@@ -27,10 +27,10 @@ public class AuthFailureHandler implements AuthenticationFailureHandler {
         LOG.info("用户登录失败");
         if (e instanceof UsernameNotFoundException){
             ResponseUtil.writeJson(httpServletResponse, ErrorCode.USER_NOT_FOUND);
-            return;
-        }
-        if (e instanceof AccountStatusException){
+        }else if (e instanceof AccountStatusException){
             ResponseUtil.writeJson(httpServletResponse,ErrorCode.USER_NOT_AVAILABLE);
+        }else {
+            ResponseUtil.writeJson(httpServletResponse,ErrorCode.LOGIN_SERVICE_ERROR);
         }
     }
 }

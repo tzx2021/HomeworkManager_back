@@ -1,0 +1,21 @@
+package sc.hqu.graduationdesign.homeworkmanager.vo.output;
+
+import io.swagger.annotations.ApiModel;
+import lombok.Data;
+
+import java.util.List;
+
+/**
+ * @author tzx
+ * @date 2021-04-07 1:26
+ */
+@Data
+@ApiModel(value = "通用的分页数据输出")
+public class GenericPageDataOutput<T> {
+
+    private Integer total;
+    private Integer pageSize;
+    private Integer pageNum;
+    private List<T> pageData;
+
+}

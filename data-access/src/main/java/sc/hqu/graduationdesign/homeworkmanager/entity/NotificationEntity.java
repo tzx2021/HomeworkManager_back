@@ -23,6 +23,8 @@ import lombok.Data;
 @Data
 public class NotificationEntity {
 
+    // TODO: 2021/4/3 再去创建一个通知附件的视图，里面保存通知id以及文件名和文件url，通知id不作为主键，主键使用自增主键
+
     /**
      * 通知id
      */

@@ -68,6 +68,7 @@ public class LoginAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public boolean supports(Class<?> authentication) {
-        return false;
+        // 配置可以进行认证处理的token
+        return LoginAuthenticationToken.class.isAssignableFrom(authentication);
     }
 }

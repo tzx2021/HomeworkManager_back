@@ -7,12 +7,8 @@ import org.springframework.web.multipart.MultipartFile;
 import sc.hqu.graduationdesign.homeworkmanager.consumer.service.RocketMqServiceTest;
 import sc.hqu.graduationdesign.homeworkmanager.exceptions.FileUploadException;
 import sc.hqu.graduationdesign.homeworkmanager.model.NotificationMessage;
-import sc.hqu.graduationdesign.homeworkmanager.provider.FtpServiceProvider;
 import sc.hqu.graduationdesign.homeworkmanager.provider.GenericCacheProvider;
 import sc.hqu.graduationdesign.homeworkmanager.provider.GenericFileServiceProvider;
-
-import javax.servlet.http.HttpServletRequest;
-import java.io.FileNotFoundException;
 
 /**
  * @author tzx

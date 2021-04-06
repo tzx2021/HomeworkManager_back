@@ -33,9 +33,9 @@ import sc.hqu.graduationdesign.homeworkmanager.service.LoginAuthenticationServic
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     /** 目前仅支持用户名名及密码登录这一种登录方式，暂不考虑其他登录方式*/
-    public static final String DEFAULT_LOGIN_URL = "/homeworkmanager/api/login";
+    public static final String DEFAULT_LOGIN_URL = "/api/homeworkmanager/login";
 
-    public static final String DEFAULT_LOGOUT_URL = "/homeworkmanager/api/logout";
+    public static final String DEFAULT_LOGOUT_URL = "/api/homeworkmanager/logout";
 
     private final String[] defaultWebIgnoring = {
             "/swagger-resources/**",
@@ -50,7 +50,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final String[] defaultAuthWhiteList = {
             DEFAULT_LOGIN_URL,
-            DEFAULT_LOGOUT_URL,
             "/test/**"
     };
 

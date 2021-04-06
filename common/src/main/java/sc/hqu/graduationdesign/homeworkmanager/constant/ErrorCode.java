@@ -20,6 +20,7 @@ public enum ErrorCode {
     /** 系统全局异常错误码*/
     MESSAGE_SENDING_ERROR(510,"短信发送失败"),
     MESSAGE_PUBLISH_ERROR(511,"消息发布失败"),
+    LOGIN_SERVICE_ERROR(512,"登录服务异常"),
 
     USER_NOT_AVAILABLE(600, "用户不可用"),
     USER_NOT_FOUND(601,"用户不存在");

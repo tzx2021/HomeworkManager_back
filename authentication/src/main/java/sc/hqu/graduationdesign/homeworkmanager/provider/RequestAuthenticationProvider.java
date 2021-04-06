@@ -65,6 +65,6 @@ public class RequestAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public boolean supports(Class<?> authentication) {
-        return false;
+        return RequestAuthenticationToken.class.isAssignableFrom(authentication);
     }
 }
