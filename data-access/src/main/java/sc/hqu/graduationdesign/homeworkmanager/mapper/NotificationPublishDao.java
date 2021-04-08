@@ -4,6 +4,8 @@ import org.apache.ibatis.annotations.Insert;
 import org.springframework.stereotype.Repository;
 import sc.hqu.graduationdesign.homeworkmanager.entity.NotificationPublishEntity;
 
+import java.util.List;
+
 /**
  * 通知发布信息数据访问接口
  * @author tzx
@@ -12,13 +14,14 @@ import sc.hqu.graduationdesign.homeworkmanager.entity.NotificationPublishEntity;
 @Repository
 public interface NotificationPublishDao {
 
+    // TODO: 2021/4/9 改sql
     /**
      * 插入通知发布信息记录
-     * @param npe       {@link NotificationPublishEntity}
+     * @param notificationPublishEntities       {@link NotificationPublishEntity}
      */
     @Insert("insert into t_notification_publish(pid,nid) values(" +
             "#{pid},#{nid}"
             + ")")
-    void insertNotificationPublish(NotificationPublishEntity npe);
+    void insertNotificationPublish(List<NotificationPublishEntity> notificationPublishEntities);
 
 }

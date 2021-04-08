@@ -18,7 +18,7 @@ public class ParentEntity {
     /**
      * 学生学号
      */
-    private Integer studentNo;
+    private Long studentNo;
 
     /**
      * 家长姓名

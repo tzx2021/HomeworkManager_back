@@ -22,6 +22,15 @@ public interface FileDao {
     List<FileEntity> queryAllByAccount(Long account);
 
     /**
+     * 通过发布对象的id查询文件，发布对象可以是班级、课程以及通知
+     * @param pid           文件发布对象的id
+     * @return              {@link FileEntity}
+     */
+    @Select("select t_file.id,name,url from t_file,t_file_publish where t_file.id = t_file_publish.id and t_file.delete_at = 0 " +
+            "and t_file_publish.id=pid")
+    List<FileEntity> queryByPublishId(Long pid);
+
+    /**
      * 插入文件信息记录
      * @param fe        {@link FileEntity}
      */

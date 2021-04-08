@@ -23,6 +23,6 @@ public class StudentClassEntity {
     /**
      * 班级id
      */
-    private Integer classId;
+    private Long classId;
 
 }

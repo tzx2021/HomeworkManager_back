@@ -15,6 +15,7 @@
         <module>message-publisher-spring-boot-starter</module>
         <module>redis-cache-spring-boot-starter</module>
         <module>files-upload-spring-boot-starter</module>
+        <module>page-query-spring-boot-starter</module>
     </modules>
 
     <properties>

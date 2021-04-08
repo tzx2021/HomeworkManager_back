@@ -35,12 +35,10 @@ public class NotificationController {
         return GenericResponse.success();
     }
 
-
     @ApiOperation(value = "短信提醒成员")
     @PostMapping(value = "/notify")
     public GenericResponse notifyMembers(@RequestBody NotifyMembersInput input){
         return GenericResponse.success();
     }
-
 
 }

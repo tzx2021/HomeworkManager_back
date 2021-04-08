@@ -12,6 +12,7 @@
         <module name="message-publisher-spring-boot-starter" />
         <module name="files-upload-spring-boot-starter" />
         <module name="redis-cache-spring-boot-starter" />
+        <module name="page-query-spring-boot-starter" />
         <module name="web-api" />
         <module name="data-access" />
         <module name="spi" />
@@ -32,6 +33,7 @@
       <module name="data-access" options="-parameters" />
       <module name="files-upload-spring-boot-starter" options="-parameters" />
       <module name="message-publisher-spring-boot-starter" options="-parameters" />
+      <module name="page-query-spring-boot-starter" options="-parameters" />
       <module name="redis-cache-spring-boot-starter" options="-parameters" />
       <module name="spi" options="-parameters" />
       <module name="support" options="-parameters" />

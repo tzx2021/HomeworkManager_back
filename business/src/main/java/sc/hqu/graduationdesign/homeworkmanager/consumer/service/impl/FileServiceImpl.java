@@ -1,14 +1,22 @@
 package sc.hqu.graduationdesign.homeworkmanager.consumer.service.impl;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import sc.hqu.graduationdesign.homeworkmanager.consumer.dto.SimpleFileDataDto;
 import sc.hqu.graduationdesign.homeworkmanager.consumer.service.FileService;
 import sc.hqu.graduationdesign.homeworkmanager.entity.FileEntity;
+import sc.hqu.graduationdesign.homeworkmanager.entity.FilePublishEntity;
 import sc.hqu.graduationdesign.homeworkmanager.exceptions.FileUploadException;
 import sc.hqu.graduationdesign.homeworkmanager.mapper.FileDao;
+import sc.hqu.graduationdesign.homeworkmanager.mapper.FilePublishDao;
 import sc.hqu.graduationdesign.homeworkmanager.provider.GenericFileServiceProvider;
 import sc.hqu.graduationdesign.homeworkmanager.utils.SecurityContextUtil;
+
+import java.util.Calendar;
+import java.util.List;
 
 /**
  * @author tzx
@@ -23,36 +31,37 @@ public class FileServiceImpl implements FileService {
     @Autowired
     private FileDao fileDao;
 
+    @Autowired
+    private FilePublishDao filePublishDao;
+
     @Override
-    public boolean upload(MultipartFile file) {
+    public Object getFilePageData(Long account, int pageSize, int pageNum) {
+        return null;
+    }
 
-        // TODO: 2021/4/3  上传成功需要返回文件的id
-
-        try {
-            // 原始的文件名称是保存到数据库中的
-            String originalFilename = file.getOriginalFilename();
-            // 文件url
-            String fileAccessUrl = fileServiceProvider.upload(file);
-            if (fileAccessUrl != null){
-                String type = fileServiceProvider.getType(originalFilename);
-                FileEntity fileEntity = new FileEntity();
-                // 通过security的上下文对象获取当前登录用户的用户名，即这里需要的account属性
-                Long account = Long.getLong(SecurityContextUtil.userDetails().getUsername());
-                fileEntity.setAccount(account);
-                fileEntity.setName(originalFilename);
-                fileEntity.setType(type);
-                fileEntity.setUploadDate(System.currentTimeMillis());
-                fileEntity.setUrl(fileAccessUrl);
-                // 将文件记录保存到数据库中
-                fileDao.insertFile(fileEntity);
-            }else {
-                return false;
-            }
-        }catch (FileUploadException e){
-            // fileServiceProvider已经将日志详细记录，这里不再需要处理异常的信息
-            return false;
+    @Override
+    public SimpleFileDataDto upload(MultipartFile file) {
+        SimpleFileDataDto simpleFile = new SimpleFileDataDto();
+        String originalFilename = file.getOriginalFilename();
+        // 文件url
+        String fileAccessUrl = fileServiceProvider.upload(file);
+        if (fileAccessUrl != null){
+            String type = fileServiceProvider.getType(originalFilename);
+            // 通过security的上下文对象获取当前登录用户的用户名，即这里需要的account属性
+            Long account = Long.getLong(SecurityContextUtil.userDetails().getUsername());
+            FileEntity fileEntity = new FileEntity();
+            fileEntity.setAccount(account);
+            fileEntity.setName(originalFilename);
+            fileEntity.setType(type);
+            fileEntity.setUploadDate(System.currentTimeMillis());
+            fileEntity.setUrl(fileAccessUrl);
+            // 将文件记录保存到数据库中
+            fileDao.insertFile(fileEntity);
+            BeanUtils.copyProperties(fileEntity,simpleFile);
+        }else {
+            throw new FileUploadException("Fail to Uploaded file!");
         }
-        return true;
+        return simpleFile;
     }
 
     @Override
@@ -62,16 +71,18 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public boolean deleteFile(Long id, boolean deleteFromServer) {
-        return false;
+        fileDao.deleteFileById(id, Calendar.getInstance().getTimeInMillis());
+        return true;
     }
 
     @Override
     public void updateFilename(Long id, String filename) {
-
+        fileDao.updateFileNameById(filename,id);
     }
 
     @Override
-    public void publishFile(Long fid, Long pid) {
-
+    @Transactional(rollbackFor = {RuntimeException.class,Exception.class})
+    public void publishFiles(List<FilePublishEntity> filePublishEntities) {
+        filePublishDao.batchInsertFilePublish(filePublishEntities);
     }
 }

@@ -19,6 +19,7 @@ public class CommonSmsNotification {
     public CommonSmsNotification(Map<String,String> contactMap){
         NotificationAttachment attachment = new NotificationAttachment();
         attachment.setAttachmentData(contactMap);
+        // 该map的key是联系方式，val是名字
         this.contactMap = attachment;
     }
 

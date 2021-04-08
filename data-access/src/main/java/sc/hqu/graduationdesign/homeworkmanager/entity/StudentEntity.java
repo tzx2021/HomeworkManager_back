@@ -16,6 +16,11 @@ public class StudentEntity {
     private Long studentNo;
 
     /**
+     * 班级Id
+     */
+    private Long classId;
+
+    /**
      * 学生姓名
      */
     private String name;

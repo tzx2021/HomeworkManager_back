@@ -22,15 +22,23 @@ public interface ClassDao {
      * @param tNo       教工号
      * @return          {@link ClassEntity}
      */
-    @Select("select id,class_code,name,total_student_num,create_date from t_class where head_teacher_no = #{tNo}")
+    @Select("select id,class_code,name,total_student_num,create_date from t_class where head_teacher_no=#{tNo}")
     List<ClassEntity> queryAllByTeacherNo(Long tNo);
+
+    /**
+     * 根据id查询班级信息
+     * @param id        班级信息id
+     * @return          {@link ClassEntity}
+     */
+    @Select("select id,class_code,name,total_student_num,create_date from t_class where id=#{id}")
+    ClassEntity queryById(Long id);
 
     /**
      * 插入班级信息记录
      * @param ce        {@link ClassEntity}
      */
-    @Insert("insert into t_class(head_teacher_no,class_code,create_date) values(" +
-            "#{headTeacherNo},#{classCode},#{createDate}"
+    @Insert("insert into t_class(head_teacher_no,name,class_code,create_date) values(" +
+            "#{headTeacherNo},#{name},#{classCode},#{createDate}"
             + ")")
     void insertClass(ClassEntity ce);
 
@@ -38,7 +46,7 @@ public interface ClassDao {
      * 更新班级信息
      * @param ce        {@link ClassEntity}
      */
-    @Update("update t_class set head_Teacher_no=#{headTeacherNo},class_code=#{classCode},name=#{name} " +
+    @Update("update t_class set class_code=#{classCode},name=#{name} " +
             "where id = #{ce.id}")
     void updateClass(ClassEntity ce);
 

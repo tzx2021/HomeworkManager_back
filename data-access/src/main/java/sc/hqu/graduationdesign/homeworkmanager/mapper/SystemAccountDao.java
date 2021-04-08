@@ -42,6 +42,14 @@ public interface SystemAccountDao {
     void updatePasswordByAccount(@Param("newPassword")String newPassword,@Param("account") Long account);
 
     /**
+     * 更新手机号
+     * @param newPhone          新的手机号
+     * @param account           系统账号
+     */
+    @Update("update t_teacher set contact=#{newPhone} where teacher_no=#{account}")
+    void updateContactByAccount(@Param("newPhone") String newPhone,@Param("account") Long account);
+
+    /**
      * 更新账户的可用状态
      * @param state     可用状态，1表示启用，0表示禁用
      * @param account   系统账号

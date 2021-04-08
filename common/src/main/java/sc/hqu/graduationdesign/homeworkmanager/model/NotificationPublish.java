@@ -17,8 +17,8 @@ public class NotificationPublish {
 
     private Long publisher;
     private List<Long> publishTo;
-    private Boolean publishToClass;
-    private Boolean publishToMembers;
+    private Boolean publishToClass = false;
+    private Boolean publishToMembers = false;
 
     public Boolean isPublishToClass() {
         return publishToClass;

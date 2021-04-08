@@ -1,6 +1,8 @@
 package sc.hqu.graduationdesign.homeworkmanager.consumer.service;
 
 import org.springframework.web.multipart.MultipartFile;
+import sc.hqu.graduationdesign.homeworkmanager.consumer.dto.SimpleFileDataDto;
+import sc.hqu.graduationdesign.homeworkmanager.entity.FilePublishEntity;
 
 import java.util.List;
 
@@ -11,14 +13,22 @@ import java.util.List;
  */
 public interface FileService {
 
-    // TODO: 2021/3/30 listFile,需要dto
+
+    /**
+     * 获取文件分页数据
+     * @param account       账号
+     * @param pageSize      分页大小
+     * @param pageNum       分页索引
+     * @return              分页数据
+     */
+    Object getFilePageData(Long account,int pageSize,int pageNum);
 
     /**
      * 文件上传
      * @param file      {@link MultipartFile}
      * @return          文件上传结果，true表示上传成功，false表示上传失败
      */
-    boolean upload(MultipartFile file);
+    SimpleFileDataDto upload(MultipartFile file);
 
     /**
      * 文件下载，该服务会在后续的版本迭代中进行更新
@@ -44,10 +54,9 @@ public interface FileService {
     void updateFilename(Long id,String filename);
 
     /**
-     * 发布文件
-     * @param fid               文件id
-     * @param pid               发布对象id集合，可以是班级id或课程id或通知id
+     * 批量发布文件
+     * @param filePublishEntities   文件发布实体对象集合
      */
-    void publishFile(Long fid, Long pid);
+    void publishFiles(List<FilePublishEntity> filePublishEntities);
 
 }

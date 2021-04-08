@@ -4,6 +4,7 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 import sc.hqu.graduationdesign.homeworkmanager.entity.NotificationEntity;
+import vinfer.learnjava.queryhelper.annotation.EnableInterception;
 
 import java.util.List;
 
@@ -20,6 +21,7 @@ public interface NotificationDao {
      * @param account       系统账号
      * @return              {@link NotificationEntity}
      */
+    @EnableInterception
     @Select("select id,title,content,type,notify_members,total_read,attachment_url,create_date from t_notification where " +
             "account=#{account}")
     List<NotificationEntity> queryAllByAccount(Long account);

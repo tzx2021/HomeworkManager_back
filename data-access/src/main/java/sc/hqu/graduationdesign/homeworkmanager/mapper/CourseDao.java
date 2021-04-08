@@ -42,14 +42,6 @@ public interface CourseDao {
     void updateCourse(CourseEntity ce);
 
     /**
-     * 更新课程学分   TODO    课程被选后不能修改学分
-     * @param newCredit     新的课程学分
-     * @param cid           课程id
-     */
-    @Update("update t_course set credit=#{newCredit} where id=#{cid}")
-    void updateCourseCreditById(@Param("newCredit") Float newCredit, @Param("cIi") Integer cid);
-
-    /**
      * 通过课程id删除课程信息     TODO    课程被选后不能删除
      * @param cid       课程id
      */

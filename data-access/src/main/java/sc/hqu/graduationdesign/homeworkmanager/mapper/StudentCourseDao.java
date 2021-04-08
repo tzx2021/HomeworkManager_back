@@ -1,8 +1,10 @@
 package sc.hqu.graduationdesign.homeworkmanager.mapper;
 
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 import sc.hqu.graduationdesign.homeworkmanager.entity.StudentCourseEntity;
+import sc.hqu.graduationdesign.homeworkmanager.model.StudentCourseElectionView;
 
 import java.util.List;
 
@@ -25,5 +27,13 @@ public interface StudentCourseDao {
      * @param idList     关联记录id集合
      */
     void batchDeleteStudentCourse(@Param("idList") List<Long> idList);
+
+    /**
+     * 从视图中查询学生选课信息
+     * @param courseId      课程id
+     * @return              {@link StudentCourseElectionView}
+     */
+    @Select("select student_no,class_name,student_name,gender,contact from v_student_course_election where course_id=#{courseId}")
+    List<StudentCourseElectionView> queryStudentCourseElectionByCourseId(Long courseId);
 
 }
