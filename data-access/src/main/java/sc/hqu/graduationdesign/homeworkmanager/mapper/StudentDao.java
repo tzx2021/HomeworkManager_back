@@ -23,8 +23,15 @@ public interface StudentDao {
      * @param cid       班级id
      * @return          {@link ClassStudentView}
      */
-    @Select("select student_no,name,gender from v_class_student where class_id=#{cid}")
+    @Select("select student_no,class_name,name,gender,contact from v_class_student where class_id=#{cid}")
     List<ClassStudentView> querySimpleInfoByClassIdInView(Long cid);
+
+    /**
+     * 通过学生学号集合查询班级学生的简易信息
+     * @param studentNoList     学生学号
+     * @return                  {@link ClassStudentView}
+     */
+    List<ClassStudentView> querySimpleInfoByStudentNoListInView(@Param("studentNoList") List<Long> studentNoList);
 
     /**
      * 从视图数据中查询班级所有学生的详细信息
@@ -32,7 +39,7 @@ public interface StudentDao {
      * @return          {@link ClassStudentView}
      */
     @EnableInterception
-    @Select("select student_no,name,gender,contact,email,social_account from v_class where class_id=#{cid}")
+    @Select("select student_no,class_name,name,gender,contact,email,social_account from v_class where class_id=#{cid}")
     List<ClassStudentView> queryFullInfoByClassIdInView(Long cid);
 
 

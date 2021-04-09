@@ -48,7 +48,7 @@ public class LoginAuthenticationProvider implements AuthenticationProvider {
         }
         // 封装为通过认证的token对象
         LoginAuthenticationToken authenticatedLoginToken = new LoginAuthenticationToken(userDetails,authentication.getCredentials(),userDetails.getAuthorities());
-        authenticatedLoginToken.setDetails(authentication.getDetails());
+        authenticatedLoginToken.setDetails(userDetails);
         return authenticatedLoginToken;
     }
 

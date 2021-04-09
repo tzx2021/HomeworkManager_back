@@ -15,6 +15,11 @@ public class ClassStudentDto {
     private Long studentNo;
 
     /**
+     * 班级名称
+     */
+    private String className;
+
+    /**
      * 学生姓名
      */
     private String name;

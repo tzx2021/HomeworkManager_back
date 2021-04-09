@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="sc.hqu.graduationdesign.homeworkmanager.mapper.NotificationPublishDao">
+
+    <insert id="batchInsert">
+        insert into t_notification_pulish(pid,nid,member_type) values
+        <foreach collection="npeList" item="npe" separator=",">
+            (#{npe.pid},#{npe.nid},#{npe.memberType})
+        </foreach>
+    </insert>
+
+</mapper>

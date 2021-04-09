@@ -11,4 +11,11 @@
         </foreach>
     </insert>
 
+    <select id="querySimpleInfoByStudentNoListInView" resultType="sc.hqu.graduationdesign.homeworkmanager.model.ClassStudentView">
+        select student_no,class_name,name,gender,contact from v_class_student where student_no in
+        <foreach collection="studentNoList" item="stuNo" open="(" separator="," close=")">
+            stuNo
+        </foreach>
+    </select>
+
 </mapper>

@@ -2,27 +2,24 @@ package sc.hqu.graduationdesign.homeworkmanager.consumer.service.impl;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.ParameterResolutionDelegate;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import sc.hqu.graduationdesign.homeworkmanager.constant.NotificationType;
+import sc.hqu.graduationdesign.homeworkmanager.constant.MemberType;
 import sc.hqu.graduationdesign.homeworkmanager.consumer.dto.MemberNotifyDto;
 import sc.hqu.graduationdesign.homeworkmanager.consumer.dto.NotificationCreateDto;
+import sc.hqu.graduationdesign.homeworkmanager.consumer.dto.NotificationMemberDto;
 import sc.hqu.graduationdesign.homeworkmanager.consumer.dto.SimpleFileDataDto;
-import sc.hqu.graduationdesign.homeworkmanager.consumer.service.FileService;
 import sc.hqu.graduationdesign.homeworkmanager.consumer.service.NotificationService;
 import sc.hqu.graduationdesign.homeworkmanager.entity.FilePublishEntity;
 import sc.hqu.graduationdesign.homeworkmanager.entity.NotificationEntity;
 import sc.hqu.graduationdesign.homeworkmanager.entity.NotificationPublishEntity;
-import sc.hqu.graduationdesign.homeworkmanager.mapper.FilePublishDao;
-import sc.hqu.graduationdesign.homeworkmanager.mapper.NotificationDao;
-import sc.hqu.graduationdesign.homeworkmanager.mapper.NotificationPublishDao;
+import sc.hqu.graduationdesign.homeworkmanager.mapper.*;
 import sc.hqu.graduationdesign.homeworkmanager.model.*;
 import sc.hqu.graduationdesign.homeworkmanager.provider.GenericMessagePublishProvider;
 import sc.hqu.graduationdesign.homeworkmanager.util.NotificationMessageConverter;
 import vinfer.learnjava.queryhelper.annotation.QueryHelper;
 import vinfer.learnjava.queryhelper.constant.InterceptMode;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -45,10 +42,79 @@ public class NotificationServiceImpl implements NotificationService {
     @Autowired
     private FilePublishDao filePublishDao;
 
+    @Autowired
+    private StudentDao studentDao;
+
+    @Autowired
+    private ParentDao parentDao;
+
     @QueryHelper(mapperClass = NotificationDao.class,interceptMode = InterceptMode.MODIFY_RESULT)
     @Override
     public Object getNotificationPageData(Long account, int pageSize, int pageNum) {
         return notificationDao.queryAllByAccount(account);
+    }
+
+    @Override
+    public List<NotificationMemberDto> getMemberDataById(Long notificationId) {
+        List<NotificationPublishEntity> npeList = notificationPublishDao.queryByNotificationId(notificationId);
+        List<NotificationMemberDto> notificationMemberDtoList = new ArrayList<>(npeList.size());
+        if (npeList.size() > 0){
+            NotificationPublishEntity npe = npeList.get(0);
+            String memberType = npe.getMemberType();
+            if (memberType.equals(MemberType.CLASS.getName())){
+                // 查询班级所有的学生
+                List<ClassStudentView> classStudentViews = new ArrayList<>();
+                npeList.forEach(pe -> {
+                    List<ClassStudentView> viewList = studentDao.querySimpleInfoByClassIdInView(pe.getId()).stream()
+                            .filter(classStudentView -> {
+                                // 基于学号进行去重过滤
+                                List<Long> stuNoList = classStudentViews.stream()
+                                        .map(ClassStudentView::getStudentNo)
+                                        .collect(Collectors.toList());
+                                return !stuNoList.contains(classStudentView.getStudentNo());
+                            }).collect(Collectors.toList());
+                    classStudentViews.addAll(viewList);
+                });
+                // 遍历赋值
+                classStudentViews.forEach(classStudentView -> {
+                    NotificationMemberDto memberDto = new NotificationMemberDto();
+                    BeanUtils.copyProperties(classStudentView,memberDto);
+                    // 将成员设置为学生
+                    memberDto.setMemberType("学生");
+                    notificationMemberDtoList.add(memberDto);
+                });
+            }else if (memberType.equals(MemberType.STUDENT.getName())){
+                // 通过学生id查询学生信息
+                List<ClassStudentView> viewList = studentDao.querySimpleInfoByStudentNoListInView(
+                        npeList.stream().map(NotificationPublishEntity::getPid).collect(Collectors.toList()));
+                viewList.forEach(classStudentView -> {
+                    NotificationMemberDto memberDto = new NotificationMemberDto();
+                    BeanUtils.copyProperties(classStudentView,memberDto);
+                    memberDto.setMemberType("学生");
+                    notificationMemberDtoList.add(memberDto);
+                });
+            }else {
+                // 通知的对象是学生家长
+                List<ClassStudentParentView> parentViews = parentDao.queryStudentParentByParentIdInView(
+                        npeList.stream().map(NotificationPublishEntity::getPid).collect(Collectors.toList()));
+                parentViews.forEach(classStudentParentView -> {
+                    NotificationMemberDto memberDto = new NotificationMemberDto();
+                    BeanUtils.copyProperties(classStudentParentView,memberDto);
+                    memberDto.setMemberType("家长");
+                    memberDto.setClassName("———");
+                    memberDto.setStudentNo(0L);
+                    notificationMemberDtoList.add(memberDto);
+                });
+            }
+        }
+        return notificationMemberDtoList;
+    }
+
+    @Override
+    public List<SimpleFileDataDto> getFileDataById(Long notificationId) {
+        return filePublishDao.queryAllByPublishId(notificationId).stream()
+                .map(fileEntity -> new SimpleFileDataDto(fileEntity.getId(),fileEntity.getName(),fileEntity.getUrl()))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -66,15 +132,17 @@ public class NotificationServiceImpl implements NotificationService {
         notificationDao.insertNotification(notificationEntity);
         Long nid = notificationEntity.getId();
         dto.setId(nid);
+        String memberType = dto.getMemberType();
         // 保存通知发布记录
         List<Long> publishIdList = dto.getContactDataList().stream().map(NotificationCreateDto.SimpleContactData::getPublishId).collect(Collectors.toList());
         publishIdList.forEach(pid -> {
             NotificationPublishEntity notificationPublishEntity = new NotificationPublishEntity();
             notificationPublishEntity.setNid(nid);
             notificationPublishEntity.setPid(pid);
+            notificationPublishEntity.setMemberType(memberType);
             notificationPublishEntities.add(notificationPublishEntity);
         });
-        notificationPublishDao.insertNotificationPublish(notificationPublishEntities);
+        notificationPublishDao.batchInsert(notificationPublishEntities);
 
         // 消息推送的公共部分的数据封装
         NotificationMessage message = new NotificationMessage();
@@ -84,7 +152,7 @@ public class NotificationServiceImpl implements NotificationService {
         publish.setPublishTo(contactDataList.stream().map(NotificationCreateDto.SimpleContactData::getPublishId).collect(Collectors.toList()));
         publish.setPublisher(account);
         String memberClass = "class";
-        if (dto.getMemberType().equals(memberClass)){
+        if (memberType.equals(memberClass)){
             publish.setPublishToClass(true);
         }else {
             publish.setPublishToMembers(true);
@@ -132,26 +200,34 @@ public class NotificationServiceImpl implements NotificationService {
             // 短信通知
             case 2:
                 List<NotificationCreateDto.SimpleContactData> contactDataList = dto.getContactDataList();
-                int size = (int)(contactDataList.size() / 0.75);
-                Map<String,String> contactMap = new HashMap<>(size);
-                String studentType = "student";
-                contactDataList.forEach(simpleContactData -> {
-                    String contact = simpleContactData.getContact();
-                    if (dto.getMemberType().equals(studentType)){
-                        // 约定了如果推送的对象是学生，那么需要对号码加上S前缀
-                        contact = "S_"+contact;
-                    }
-                    contactMap.put(contact,simpleContactData.getName());
-                });
-                CommonSmsNotification smsNotification = new CommonSmsNotification(contactMap);
-                messagePublishProvider.publishAsync(NotificationMessageConverter.convertToSmsMessage(smsNotification));
+                pushingSms(contactDataList, dto.getMemberType(), dto.getContent());
                 break;
             default:break;
         }
     }
 
+    private void pushingSms(List<NotificationCreateDto.SimpleContactData> contactDataList,
+                            String memberType, @Nullable String content){
+        int size = (int)(contactDataList.size() / 0.75);
+        Map<String,String> contactMap = new HashMap<>(size);
+        String studentType = "student";
+        contactDataList.forEach(simpleContactData -> {
+            String contact = simpleContactData.getContact();
+            // content为空时推送短信提醒，此时需要对学生的号码进行处理
+            if (content == null && memberType.equals(studentType)){
+                // 约定了如果推送的对象是学生，那么需要对号码加上S前缀
+                contact = "S_"+contact;
+            }
+            contactMap.put(contact,simpleContactData.getName());
+        });
+        CommonSmsNotification smsNotification = new CommonSmsNotification(contactMap);
+        smsNotification.setContent(content);
+        messagePublishProvider.publishAsync(NotificationMessageConverter.convertToSmsMessage(smsNotification));
+    }
+
     @Override
     public void notifyMember(MemberNotifyDto dto) {
-
+        // 通过推送短信通知提醒所有成员
+        pushingSms(dto.getContactDataList(), dto.getMemberType(),null);
     }
 }

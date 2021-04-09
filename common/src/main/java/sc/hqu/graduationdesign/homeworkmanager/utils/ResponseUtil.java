@@ -16,15 +16,19 @@ import java.nio.charset.StandardCharsets;
 public class ResponseUtil {
 
     public static void writeJson(HttpServletResponse response, ErrorCode errorCode) throws IOException {
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.setCharacterEncoding(StandardCharsets.UTF_8.toString());
-        response.getWriter().write(JSON.toJSONString(GenericResponse.error(errorCode)));
+        if (!response.isCommitted()){
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            response.setCharacterEncoding(StandardCharsets.UTF_8.toString());
+            response.getWriter().write(JSON.toJSONString(GenericResponse.error(errorCode)));
+        }
     }
 
     public static void writeJson(HttpServletResponse response, Object data) throws IOException {
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.setCharacterEncoding(StandardCharsets.UTF_8.toString());
-        response.getWriter().write(JSON.toJSONString(data));
+        if (!response.isCommitted()){
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            response.setCharacterEncoding(StandardCharsets.UTF_8.toString());
+            response.getWriter().write(JSON.toJSONString(data));
+        }
     }
 
 }

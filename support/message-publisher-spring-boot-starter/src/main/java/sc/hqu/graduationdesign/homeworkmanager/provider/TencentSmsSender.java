@@ -6,6 +6,7 @@ import com.tencentcloudapi.sms.v20190711.SmsClient;
 import com.tencentcloudapi.sms.v20190711.models.SendSmsRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sc.hqu.graduationdesign.homeworkmanager.constant.SmsTemplate;
 import sc.hqu.graduationdesign.homeworkmanager.exceptions.MessageSendingException;
 
 /**
@@ -34,12 +35,7 @@ public class TencentSmsSender implements GenericShortMessageSendingProvider{
     }
 
     @Override
-    public void sendingMessage(String phoneNum, String singleParam, int templateIndex) throws MessageSendingException {
-        // 没有使用正确模板的调用不进行发送
-        if (templateIndex < 0 || templateIndex > 1){
-            LOG.error("Wrong sms template index, message sending has been canceled!");
-            return;
-        }
+    public void sendingMessage(String phoneNum, String singleParam, String templateIndex) throws MessageSendingException {
         String[] phoneNumArr = {"+86"+phoneNum};
         String[] paramArr = {singleParam};
         // 新建短信发送请求，使用的版本要和smsClient的一致
@@ -51,9 +47,11 @@ public class TencentSmsSender implements GenericShortMessageSendingProvider{
         // 设置发送号码
         sendSmsRequest.setPhoneNumberSet(phoneNumArr);
         // 设置选用的模板序号
-        sendSmsRequest.setTemplateID(TEMPLATE_INDEX[templateIndex]);
-        // 设置模板参数
-        sendSmsRequest.setTemplateParamSet(paramArr);
+        sendSmsRequest.setTemplateID(templateIndex);
+        // 设置模板参数，sms_remind没有模板参数
+        if (!templateIndex.equals(SmsTemplate.SMS_REMIND.getTemplateId())){
+            sendSmsRequest.setTemplateParamSet(paramArr);
+        }
         try {
             tencentSmsClient.SendSms(sendSmsRequest);
         } catch (TencentCloudSDKException e) {

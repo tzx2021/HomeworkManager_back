@@ -15,4 +15,12 @@ public class SimpleFileDataDto {
 
     private String url;
 
+    public SimpleFileDataDto(){}
+
+    public SimpleFileDataDto(Long id,String name,String url){
+        this.id = id;
+        this.name = name;
+        this.url = url;
+    }
+
 }

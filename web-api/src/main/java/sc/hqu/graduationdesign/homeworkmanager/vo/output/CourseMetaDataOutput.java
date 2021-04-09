@@ -22,7 +22,7 @@ public class CourseMetaDataOutput {
     private List<CourseElectionInfo> courseElectionData;
     private List<SimpleFileOutput> courseFiles;
 
-
+    @Data
     public static class CourseElectionInfo{
         private Long studentNo;
         private String studentName;

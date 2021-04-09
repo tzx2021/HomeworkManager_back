@@ -2,6 +2,10 @@ package sc.hqu.graduationdesign.homeworkmanager.consumer.service;
 
 import sc.hqu.graduationdesign.homeworkmanager.consumer.dto.MemberNotifyDto;
 import sc.hqu.graduationdesign.homeworkmanager.consumer.dto.NotificationCreateDto;
+import sc.hqu.graduationdesign.homeworkmanager.consumer.dto.NotificationMemberDto;
+import sc.hqu.graduationdesign.homeworkmanager.consumer.dto.SimpleFileDataDto;
+
+import java.util.List;
 
 /**
  * 通知服务接口
@@ -18,6 +22,20 @@ public interface NotificationService {
      * @return              分页数据
      */
     Object getNotificationPageData(Long account,int pageSize,int pageNum);
+
+    /**
+     * 通过通知id获取通知的成员数据
+     * @param notificationId    通知id
+     * @return                  {@link NotificationMemberDto}
+     */
+    List<NotificationMemberDto> getMemberDataById(Long notificationId);
+
+    /**
+     * 通过通知id获取发布在该通知的所有文件信息
+     * @param notificationId    通知id
+     * @return                  {@link SimpleFileDataDto}
+     */
+    List<SimpleFileDataDto> getFileDataById(Long notificationId);
 
     /**
      * 创建通知

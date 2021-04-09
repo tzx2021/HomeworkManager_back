@@ -22,7 +22,7 @@ public interface SystemAccountDao {
      * @param tNo       教工号
      * @return          {@link SystemAccountEntity}
      */
-    @Select("select account,password,type,enable where t_system_account where account=#{tNo}")
+    @Select("select account,password,type,enable from t_system_account where account=#{tNo}")
     SystemAccountEntity queryByTeacherNo(Long tNo);
 
     /**

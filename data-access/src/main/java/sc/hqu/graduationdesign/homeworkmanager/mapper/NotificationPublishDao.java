@@ -1,6 +1,8 @@
 package sc.hqu.graduationdesign.homeworkmanager.mapper;
 
 import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 import sc.hqu.graduationdesign.homeworkmanager.entity.NotificationPublishEntity;
 
@@ -14,14 +16,18 @@ import java.util.List;
 @Repository
 public interface NotificationPublishDao {
 
-    // TODO: 2021/4/9 改sql
     /**
      * 插入通知发布信息记录
      * @param notificationPublishEntities       {@link NotificationPublishEntity}
      */
-    @Insert("insert into t_notification_publish(pid,nid) values(" +
-            "#{pid},#{nid}"
-            + ")")
-    void insertNotificationPublish(List<NotificationPublishEntity> notificationPublishEntities);
+    void batchInsert(@Param("npeList") List<NotificationPublishEntity> notificationPublishEntities);
+
+    /**
+     * 通过通知id查询所有的通知发布记录
+     * @param nid       通知id
+     * @return          {@link NotificationPublishEntity}
+     */
+    @Select("select pid,member_type from t_notification_publish where nid=#{nid}")
+    List<NotificationPublishEntity> queryByNotificationId(Long nid);
 
 }

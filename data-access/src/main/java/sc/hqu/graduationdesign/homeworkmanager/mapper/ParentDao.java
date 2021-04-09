@@ -26,6 +26,13 @@ public interface ParentDao {
     List<ClassStudentParentView> queryStudentParentByClassIdInView(Long cid);
 
     /**
+     * 通过家长id集合查询班级学生视图
+     * @param parentIdList      家长id集合
+     * @return                  {@link ClassStudentParentView}
+     */
+    List<ClassStudentParentView> queryStudentParentByParentIdInView(@Param("parentIdList") List<Long> parentIdList);
+
+    /**
      * 批量插入家长信息记录
      * @param pes       {@link ParentEntity}
      */

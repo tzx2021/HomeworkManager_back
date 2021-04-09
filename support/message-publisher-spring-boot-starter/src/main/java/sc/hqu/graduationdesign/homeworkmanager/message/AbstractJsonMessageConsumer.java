@@ -31,9 +31,12 @@ public abstract class AbstractJsonMessageConsumer implements RocketMQListener<St
         // 尝试获取contactMap，如果非空，那么意味着是sms主题的消息
         JSONObject contactMap = jsonObject.getJSONObject("contactMap");
         if (contactMap != null){
-            // 处理sms主题的消息数据，只需要将里面的map数据取出
+            // 处理sms主题的消息数据，只需要将里面的map数据和content取出
             Map<String,String> contactAttachment = JSONObject.parseObject(contactMap.getJSONObject("attachmentData").toJSONString(), new TypeReference<Map<String,String>>(){});
             notificationContext.setAttachment(contactAttachment);
+            // 短信通知的content会被直接封装在CommonSmsNotification对象中
+            String content = jsonObject.getString("content");
+            notificationContext.setContent(content);
         }else {
             JSONObject attachment = jsonObject.getJSONObject("attachment");
             // 文本消息和附件消息都带有message和publish属性

@@ -16,6 +16,6 @@ public interface GenericShortMessageSendingProvider {
      * @param templateIndex             模板索引
      * @throws MessageSendingException  短信发送异常
      */
-    void sendingMessage(String phoneNum,String singleParam,int templateIndex) throws MessageSendingException;
+    void sendingMessage(String phoneNum,String singleParam,String templateIndex) throws MessageSendingException;
 
 }

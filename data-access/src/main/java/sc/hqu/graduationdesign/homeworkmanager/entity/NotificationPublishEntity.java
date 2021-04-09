@@ -25,6 +25,12 @@ public class NotificationPublishEntity {
      */
     private Long nid;
 
+    /**
+     * 通知对象的类型，可以是学生、家长或班级
+     * 分别对应的值是: student,parent,class
+     */
+    private String memberType;
+
 
 
 }

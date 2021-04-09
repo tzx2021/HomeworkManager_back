@@ -31,7 +31,7 @@ public class RequestAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        RequestAuthenticationToken requestToken = (RequestAuthenticationToken) authentication.getCredentials();
+        String requestToken = (String) authentication.getCredentials();
         Object userToken = cacheProvider.get(requestToken);
         UserDetails user;
         if (userToken != null){

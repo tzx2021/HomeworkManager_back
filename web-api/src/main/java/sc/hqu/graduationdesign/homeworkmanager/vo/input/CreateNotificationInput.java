@@ -3,6 +3,7 @@ package sc.hqu.graduationdesign.homeworkmanager.vo.input;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import sc.hqu.graduationdesign.homeworkmanager.consumer.dto.NotificationCreateDto;
+import sc.hqu.graduationdesign.homeworkmanager.vo.output.SimpleFileOutput;
 
 import java.util.List;
 
@@ -20,6 +21,6 @@ public class CreateNotificationInput {
     private boolean confirmable;
     private String memberType;
     private List<NotificationCreateDto.SimpleContactData> contactDataList;
-    private List<Long> attachments;
+    private List<SimpleFileOutput> attachments;
 
 }

@@ -63,6 +63,7 @@ public class RequestAuthenticationFilter extends BasicAuthenticationFilter {
                 }catch (ExpiredJwtException | MalformedJwtException | SignatureException |IllegalArgumentException e){
                     LOG.error("请求token进行JWT验签失败，无效token，拒绝访问: {}",request.getRequestURI());
                     ResponseUtil.writeJson(response,ErrorCode.INVALID_TOKEN);
+                    return;
                 } catch (AuthenticationException e){
                     this.getAuthenticationEntryPoint().commence(request,response,e);
                     return;

@@ -14,6 +14,8 @@ import sc.hqu.graduationdesign.homeworkmanager.mapper.FileDao;
 import sc.hqu.graduationdesign.homeworkmanager.mapper.FilePublishDao;
 import sc.hqu.graduationdesign.homeworkmanager.provider.GenericFileServiceProvider;
 import sc.hqu.graduationdesign.homeworkmanager.utils.SecurityContextUtil;
+import vinfer.learnjava.queryhelper.annotation.QueryHelper;
+import vinfer.learnjava.queryhelper.constant.InterceptMode;
 
 import java.util.Calendar;
 import java.util.List;
@@ -34,9 +36,10 @@ public class FileServiceImpl implements FileService {
     @Autowired
     private FilePublishDao filePublishDao;
 
+    @QueryHelper(mapperClass = FileDao.class,interceptMode = InterceptMode.MODIFY_RESULT)
     @Override
     public Object getFilePageData(Long account, int pageSize, int pageNum) {
-        return null;
+        return fileDao.queryAllByAccount(account);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package sc.hqu.graduationdesign.homeworkmanager.config;
 
 import lombok.Setter;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -20,6 +21,8 @@ import sc.hqu.graduationdesign.homeworkmanager.provider.GenericCacheProvider;
 import sc.hqu.graduationdesign.homeworkmanager.provider.LoginAuthenticationProvider;
 import sc.hqu.graduationdesign.homeworkmanager.provider.RequestAuthenticationProvider;
 import sc.hqu.graduationdesign.homeworkmanager.service.LoginAuthenticationServiceImpl;
+
+import java.util.Arrays;
 
 /**
  * spring-security主配置类，用于登录鉴权以及接口鉴权的相关配置
@@ -42,7 +45,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             "/swagger-ui.html",
             "/doc.html",
             "/v2/api-docs",
-            "/webjars",
+            "/webjars/**",
             "/images/**",
             "/css/**",
             "/js/**",
@@ -82,11 +85,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         loginAuthenticationFilter.setAuthenticationSuccessHandler(authSuccessHandler());
         loginAuthenticationFilter.setAuthenticationFailureHandler(authFailureHandler());
         return loginAuthenticationFilter;
-    }
-
-    @Bean
-    RequestAuthenticationFilter requestAuthenticationFilter() throws Exception {
-        return new RequestAuthenticationFilter(authenticationManager(),authenticationEntryPoint(),authWhiteList);
     }
 
     @Bean
@@ -173,7 +171,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 // 登录认证的过滤器
                 .addFilterBefore(loginAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 // 请求认证的过滤器
-                .addFilter(requestAuthenticationFilter())
+                // 这里的请求认证过滤器一定要手动new出来。不可以加到spring容器中（即不能注册为bean）
+                // 否则会出现配置web.ignoring无效的情况
+                .addFilter(new RequestAuthenticationFilter(authenticationManager(),authenticationEntryPoint(),authWhiteList))
                 .exceptionHandling()
                 // 认证失败的记录点
                 .authenticationEntryPoint(authenticationEntryPoint())
@@ -190,4 +190,5 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers(webIgnoringUrls);
     }
+
 }

@@ -16,6 +16,7 @@ public class NotificationCreateDto {
     private String content;
     private Integer type;
     private Boolean confirmable;
+    private Integer totalConfirm = 0;
     private String memberType;
     private List<SimpleContactData> contactDataList;
     private List<SimpleFileDataDto> attachments;

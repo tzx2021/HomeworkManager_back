@@ -3,6 +3,8 @@ package sc.hqu.graduationdesign.homeworkmanager.mapper;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
 import sc.hqu.graduationdesign.homeworkmanager.entity.FileEntity;
+import vinfer.learnjava.queryhelper.annotation.EnableInterception;
+
 import java.util.List;
 
 /**
@@ -18,6 +20,7 @@ public interface FileDao {
      * @param account       系统账号
      * @return              {@link FileEntity}
      */
+    @EnableInterception
     @Select("select id,publish_state,name,url,type,upload_date from t_file where account=#{account} and delete_at=0")
     List<FileEntity> queryAllByAccount(Long account);
 

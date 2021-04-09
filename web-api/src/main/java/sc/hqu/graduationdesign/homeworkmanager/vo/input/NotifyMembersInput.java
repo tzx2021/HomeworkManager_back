@@ -14,6 +14,14 @@ import java.util.List;
 public class NotifyMembersInput {
 
     private Long notificationId;
-    private List<NotificationDataOutput.NotifyMemberInfo> memberInfoList;
+    private List<NotifyInfo> notifyInfos;
+    private String memberType;
+
+    @Data
+    public static class NotifyInfo{
+        private Long publishId;
+        private String name;
+        private String contact;
+    }
 
 }

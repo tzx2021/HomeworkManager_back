@@ -28,7 +28,7 @@ public class LoginAuthenticationServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Long teacherNo = Long.getLong(username);
+        Long teacherNo = Long.valueOf(username);
         SystemAccountEntity systemAccountEntity = systemAccountDao.queryByTeacherNo(teacherNo);
         if (systemAccountEntity == null){
             // 用户不存在

@@ -39,7 +39,7 @@ public class LoginAuthenticationToken extends AbstractAuthenticationToken {
         super(authorities);
         this.credentials = credentials;
         this.principal = principal;
-        this.setAuthenticated(true);
+        super.setAuthenticated(true);
     }
 
     @Override

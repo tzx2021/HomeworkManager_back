@@ -16,6 +16,11 @@ public class ClassStudentView {
     private Integer classId;
 
     /**
+     * 班级名称
+     */
+    private String className;
+
+    /**
      * 学号
      */
     private Long studentNo;
