@@ -1,5 +1,7 @@
 package vinfer.learnjava.queryhelper.support;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Data;
 
 import java.util.Collection;
@@ -9,6 +11,7 @@ import java.util.Collection;
  * @date 2021-02-04    00:57
  **/
 @Data
+@JsonNaming(value = PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class CommonPaginationQueryResult implements PaginationQueryResultAdapter{
 
     private Object allData = null;

@@ -1,6 +1,7 @@
 package sc.hqu.graduationdesign.homeworkmanager.consumer.service;
 
 import org.springframework.web.multipart.MultipartFile;
+import sc.hqu.graduationdesign.homeworkmanager.consumer.dto.FilePublishDto;
 import sc.hqu.graduationdesign.homeworkmanager.consumer.dto.SimpleFileDataDto;
 import sc.hqu.graduationdesign.homeworkmanager.entity.FilePublishEntity;
 
@@ -28,7 +29,7 @@ public interface FileService {
      * @param file      {@link MultipartFile}
      * @return          文件上传结果，true表示上传成功，false表示上传失败
      */
-    SimpleFileDataDto upload(MultipartFile file);
+    String upload(MultipartFile file);
 
     /**
      * 文件下载，该服务会在后续的版本迭代中进行更新
@@ -42,9 +43,8 @@ public interface FileService {
      * 文件删除，当前仅提供数据库中文件记录的删除，文件对应的服务器资源删除会在后续的版本迭代中更新
      * @param id                文件在数据库中的id
      * @param deleteFromServer  是否从服务器上删除文件资源，默认为false
-     * @return                  删除结果，true代表删除成功，false为删除失败
      */
-    boolean deleteFile(Long id,boolean deleteFromServer);
+    void deleteFile(Long id, boolean deleteFromServer);
 
     /**
      * 更新文件名称
@@ -55,8 +55,16 @@ public interface FileService {
 
     /**
      * 批量发布文件
-     * @param filePublishEntities   文件发布实体对象集合
+     * @param filePublishDtoList    文件创建和发布的数据封装对象集合
+     * @param publish               文件发布状态，1代表会发布文件，0则不发布文件
      */
-    void publishFiles(List<FilePublishEntity> filePublishEntities);
+    void batchCreate(List<FilePublishDto> filePublishDtoList,int publish);
+
+    /**
+     * 创建并且发布一个文件记录
+     * @param filePublishDto        文件创建和发布的数据封装对象
+     * @param publish               文件发布状态，1代表会发布文件，0则不发布文件
+     */
+    void create(FilePublishDto filePublishDto,int publish);
 
 }

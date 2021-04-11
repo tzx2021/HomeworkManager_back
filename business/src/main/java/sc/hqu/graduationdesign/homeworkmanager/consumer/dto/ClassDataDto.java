@@ -15,7 +15,7 @@ public class ClassDataDto {
     private String name;
     private String classCode;
     private Integer totalStudentNum;
-    private String createDate;
+    private Long createDate;
     private List<ClassStudentDto> studentDtoList;
     private List<StudentParentDto> studentParentDtoList;
     private List<SimpleFileDataDto> fileDataDtoList;

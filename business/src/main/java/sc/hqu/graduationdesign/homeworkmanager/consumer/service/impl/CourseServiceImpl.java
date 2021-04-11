@@ -3,15 +3,20 @@ package sc.hqu.graduationdesign.homeworkmanager.consumer.service.impl;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import sc.hqu.graduationdesign.homeworkmanager.constant.FilePublishType;
 import sc.hqu.graduationdesign.homeworkmanager.consumer.dto.*;
 import sc.hqu.graduationdesign.homeworkmanager.consumer.service.CourseService;
 import sc.hqu.graduationdesign.homeworkmanager.entity.CourseEntity;
+import sc.hqu.graduationdesign.homeworkmanager.entity.TeacherCourseEntity;
 import sc.hqu.graduationdesign.homeworkmanager.mapper.CourseDao;
 import sc.hqu.graduationdesign.homeworkmanager.mapper.FileDao;
 import sc.hqu.graduationdesign.homeworkmanager.mapper.StudentCourseDao;
-import sc.hqu.graduationdesign.homeworkmanager.model.StudentCourseElectionView;
+import sc.hqu.graduationdesign.homeworkmanager.mapper.TeacherCourseDao;
+import sc.hqu.graduationdesign.homeworkmanager.utils.SecurityContextUtil;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -29,6 +34,9 @@ public class CourseServiceImpl implements CourseService {
     private StudentCourseDao studentCourseDao;
 
     @Autowired
+    private TeacherCourseDao teacherCourseDao;
+
+    @Autowired
     private FileDao fileDao;
 
     @Override
@@ -44,14 +52,14 @@ public class CourseServiceImpl implements CourseService {
             List<CourseElectionData> courseElectionDataList = new ArrayList<>(8);
             studentCourseDao.queryStudentCourseElectionByCourseId(courseId).forEach(view -> {
                 CourseElectionData courseElectionData = new CourseElectionData();
-                BeanUtils.copyProperties(view,courseDataDto);
+                BeanUtils.copyProperties(view,courseElectionData);
                 courseElectionDataList.add(courseElectionData);
             });
             courseDataDto.setCourseElectionData(courseElectionDataList);
 
             // 查询该课程发布的文件
             List<SimpleFileDataDto> fileDataDtoList = new ArrayList<>(8);
-            fileDao.queryByPublishId(courseId).forEach(fileEntity -> {
+            fileDao.queryPublishFile(courseId, FilePublishType.COURSE.getType()).forEach(fileEntity -> {
                 SimpleFileDataDto simpleFileDataDto = new SimpleFileDataDto();
                 BeanUtils.copyProperties(fileEntity,simpleFileDataDto);
                 fileDataDtoList.add(simpleFileDataDto);
@@ -63,11 +71,20 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    @Transactional(rollbackFor = {RuntimeException.class,Exception.class})
     public CourseCreateDto create(CourseCreateDto courseCreateDto) {
         CourseEntity courseEntity = new CourseEntity();
         BeanUtils.copyProperties(courseCreateDto,courseEntity);
+        courseEntity.setCreateDate(Calendar.getInstance().getTimeInMillis());
+        // 保存课程记录
         courseDao.insertCourse(courseEntity);
         courseCreateDto.setId(courseEntity.getId());
+        // 保存教师课程记录
+        TeacherCourseEntity tce = new TeacherCourseEntity();
+        tce.setCourseId(courseEntity.getId());
+        Long teacherNo = Long.valueOf(SecurityContextUtil.userDetails().getUsername());
+        tce.setTeacherNo(teacherNo);
+        teacherCourseDao.insertTeacherCourse(tce);
         return courseCreateDto;
     }
 

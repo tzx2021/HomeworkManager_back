@@ -1,6 +1,7 @@
 package sc.hqu.graduationdesign.homeworkmanager.mapper;
 
 import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 import sc.hqu.graduationdesign.homeworkmanager.entity.NotificationEntity;
@@ -22,7 +23,7 @@ public interface NotificationDao {
      * @return              {@link NotificationEntity}
      */
     @EnableInterception
-    @Select("select id,title,content,type,notify_members,total_read,attachment_url,create_date from t_notification where " +
+    @Select("select id,title,content,type,confirmable,total_confirm,member_type,create_date from t_notification where " +
             "account=#{account}")
     List<NotificationEntity> queryAllByAccount(Long account);
 
@@ -30,9 +31,6 @@ public interface NotificationDao {
      * 插入通知记录
      * @param ne        {@link NotificationEntity}
      */
-    @Insert("insert into t_notification(account,title,content,type,confirmable,create_date) values(" +
-            "#{account},#{title},#{content},#{type},#{confirmable},#{createDate}"
-            + ")")
-    void insertNotification(NotificationEntity ne);
+    void insertNotification(@Param("ne") NotificationEntity ne);
 
 }

@@ -28,10 +28,7 @@ public interface CourseDao {
      * 插入课程信息记录
      * @param ce        {@link CourseEntity}
      */
-    @Insert("insert into t_course(name,credit,class_time,course_period,create_date) values(" +
-            "#{name},#{credit},#{classTime},#{coursePeriod},#{createDate}"
-            + ")")
-    void insertCourse(CourseEntity ce);
+    void insertCourse(@Param("ce") CourseEntity ce);
 
     /**
      * 更新课程信息

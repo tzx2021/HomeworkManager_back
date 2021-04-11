@@ -21,6 +21,11 @@ public class ClassStudentParentView {
     private Long studentNo;
 
     /**
+     * 学生姓名
+     */
+    private String studentName;
+
+    /**
      * 家长id
      */
     private Integer parentId;

@@ -29,7 +29,8 @@ public enum ErrorCode {
     USER_NOT_FOUND(601,"用户不存在"),
     DELETE_FORBIDDEN(602,"数据禁止删除"),
     WRONG_VERIFY_CODE(603,"短信验证码错误"),
-    VERIFY_CODE_EXPIRED(604,"短信验证码已过期");
+    VERIFY_CODE_EXPIRED(604,"短信验证码已过期"),
+    WRONG_PASS(605,"登录密码错误");
 
     private final Integer code;
     private final String desc;

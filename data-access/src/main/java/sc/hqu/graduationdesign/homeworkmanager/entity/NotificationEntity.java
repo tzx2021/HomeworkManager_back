@@ -51,6 +51,11 @@ public class NotificationEntity {
     private Integer type;
 
     /**
+     * 通知的成员的类型，可以是学生家长或班级
+     */
+    private String memberType;
+
+    /**
      * 通知是否需要每个成员都点击确认，默认值是0，代表不需要确认
      * 如果不是向班级发送的通知，不可设置该值
      */

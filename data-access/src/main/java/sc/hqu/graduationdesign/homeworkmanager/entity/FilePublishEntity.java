@@ -16,14 +16,19 @@ public class FilePublishEntity {
     private Long id;
 
     /**
+     * 文件id
+     */
+    private Long fid;
+
+    /**
      * 发布id，与班级id或课程id或通知id进行关联
      * 文件可以发布到课程或班级或通知中
      */
     private Long pid;
 
     /**
-     * 文件id
+     * 发布对象的类型，1代表班级，2代表课程，3代表通知
      */
-    private Long fid;
+    private Integer publishType;
 
 }

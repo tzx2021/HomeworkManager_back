@@ -1,9 +1,6 @@
 package sc.hqu.graduationdesign.homeworkmanager.mapper;
 
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
 import sc.hqu.graduationdesign.homeworkmanager.entity.ClassEntity;
 
@@ -22,7 +19,7 @@ public interface ClassDao {
      * @param tNo       教工号
      * @return          {@link ClassEntity}
      */
-    @Select("select id,class_code,name,total_student_num,create_date from t_class where head_teacher_no=#{tNo}")
+    @Select("select id,class_code,head_teacher_no,name,total_student_num,create_date from t_class where head_teacher_no=#{tNo}")
     List<ClassEntity> queryAllByTeacherNo(Long tNo);
 
     /**
@@ -47,8 +44,16 @@ public interface ClassDao {
      * @param ce        {@link ClassEntity}
      */
     @Update("update t_class set class_code=#{classCode},name=#{name} " +
-            "where id = #{ce.id}")
+            "where id=#{id}")
     void updateClass(ClassEntity ce);
+
+    /**
+     * 更新班级学生数
+     * @param id        班级id
+     * @param num       学生总数
+     */
+    @Update("update t_class set total_student_num=total_student_num+#{num} where id=#{id}")
+    void updateClassStudentNum(@Param("id") Long id, @Param("num") Integer num);
 
     /**
      * 删除班级信息

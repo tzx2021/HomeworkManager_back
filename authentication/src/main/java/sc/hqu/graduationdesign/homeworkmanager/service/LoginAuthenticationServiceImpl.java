@@ -44,7 +44,7 @@ public class LoginAuthenticationServiceImpl implements UserDetailsService {
                 username,
                 systemAccountEntity.getPassword(),
                 teacherEntity.getName(),
-                teacherEntity.getGender() == 1 ? "男" : "女",
+                teacherEntity.getGender(),
                 teacherEntity.getContact(),
                 teacherEntity.getAddress(),
                 teacherEntity.getJobTitle(),

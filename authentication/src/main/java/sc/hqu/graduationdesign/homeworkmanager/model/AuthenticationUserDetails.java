@@ -29,7 +29,7 @@ public class AuthenticationUserDetails extends User {
 
     private final String teacherName;
 
-    private final String gender;
+    private final Integer gender;
 
     private final String contact;
 
@@ -38,10 +38,10 @@ public class AuthenticationUserDetails extends User {
     private final String jobTitle;
 
     public AuthenticationUserDetails(String username,String password,Collection<? extends GrantedAuthority> authorities) {
-        this(username,password,"","","","","",authorities);
+        this(username,password,"",1,"","","",authorities);
     }
 
-    public AuthenticationUserDetails(String username, String password, String teacherName, String gender, String contact, String address, String jobTitle, Collection<? extends GrantedAuthority> authorities){
+    public AuthenticationUserDetails(String username, String password, String teacherName, Integer gender, String contact, String address, String jobTitle, Collection<? extends GrantedAuthority> authorities){
         super(username, password, authorities);
         this.username = username;
         this.password = password;

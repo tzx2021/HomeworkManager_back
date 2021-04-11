@@ -1,5 +1,6 @@
 package sc.hqu.graduationdesign.homeworkmanager.mapper;
 
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
@@ -38,9 +39,19 @@ public interface StudentDao {
      * @param cid       班级id
      * @return          {@link ClassStudentView}
      */
-    @EnableInterception
-    @Select("select student_no,class_name,name,gender,contact,email,social_account from v_class where class_id=#{cid}")
+    @Select("select student_no,class_name,name,gender,contact,email,social_account from v_class_student where class_id=#{cid}")
     List<ClassStudentView> queryFullInfoByClassIdInView(Long cid);
+
+    /**
+     * 通过教工号查询教师带领的所有班级中所有的学生信息
+     * @param teacherNo     教工号
+     * @return              {@link ClassStudentView}
+     */
+    @EnableInterception
+    @Select("select class_id,student_no,class_name,name,gender,contact,email,social_account from v_class_student where class_id in(" +
+            "select class_id from t_class where head_teacher_no=#{teacherNo}" +
+            ")")
+    List<ClassStudentView> queryAllStudentByTeacherNo(Long teacherNo);
 
 
     /**
@@ -53,7 +64,7 @@ public interface StudentDao {
      * 将学生移出班级，这里移出的逻辑通过将班级id设置为0来实现
      * @param studentNo             学生号
      */
-    @Update("update t_student set class_id=0 where student_no=#{studentNo}")
+    @Delete("delete from t_student where student_no=#{studentNo}")
     void deleteStudentFromClass(Long studentNo);
 
 }

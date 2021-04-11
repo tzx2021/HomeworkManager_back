@@ -3,6 +3,7 @@ package sc.hqu.graduationdesign.homeworkmanager.handler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AccountStatusException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -29,7 +30,9 @@ public class AuthFailureHandler implements AuthenticationFailureHandler {
             ResponseUtil.writeJson(httpServletResponse, ErrorCode.USER_NOT_FOUND);
         }else if (e instanceof AccountStatusException){
             ResponseUtil.writeJson(httpServletResponse,ErrorCode.USER_NOT_AVAILABLE);
-        }else {
+        }else if (e instanceof BadCredentialsException){
+            ResponseUtil.writeJson(httpServletResponse,ErrorCode.WRONG_PASS);
+        }else{
             ResponseUtil.writeJson(httpServletResponse,ErrorCode.LOGIN_SERVICE_ERROR);
         }
     }

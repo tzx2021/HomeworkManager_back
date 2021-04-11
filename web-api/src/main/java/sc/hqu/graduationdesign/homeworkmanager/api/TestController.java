@@ -1,12 +1,14 @@
 package sc.hqu.graduationdesign.homeworkmanager.api;
 
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import sc.hqu.graduationdesign.homeworkmanager.consumer.service.FileService;
 import sc.hqu.graduationdesign.homeworkmanager.consumer.service.RocketMqServiceTest;
+import sc.hqu.graduationdesign.homeworkmanager.entity.TeacherEntity;
 import sc.hqu.graduationdesign.homeworkmanager.exceptions.FileUploadException;
-import sc.hqu.graduationdesign.homeworkmanager.model.NotificationMessage;
 import sc.hqu.graduationdesign.homeworkmanager.provider.GenericCacheProvider;
 import sc.hqu.graduationdesign.homeworkmanager.provider.GenericFileServiceProvider;
 
@@ -23,6 +25,8 @@ public class TestController {
     @Autowired
     private GenericFileServiceProvider ftpServiceProvider;
 
+    @Autowired
+    private FileService fileService;
 
     @GetMapping(value = "/test/send")
     public String send(){
@@ -35,29 +39,15 @@ public class TestController {
 
     @GetMapping(value = "/test/redis")
     public Object redisTest(){
-        NotificationMessage message = new NotificationMessage();
-        message.setType(1);
-        message.setTitle("redis");
-        message.setContent("娃娃啊哇哇哇哇");
-        message.setConfirmable(false);
-        message.setPublishDate(System.currentTimeMillis());
-        cacheProvider.setIfAbsent("test", message);
-        return cacheProvider.get("test");
+        TeacherEntity teacherEntity = new TeacherEntity();
+        teacherEntity.setJobTitle("讲师");
+        return teacherEntity;
     }
 
-
-    @CrossOrigin(origins = "*",maxAge = 3600)
-    @PostMapping(value = "/test/upload")
-    public String uploadTest(@RequestParam("file") MultipartFile file){
-        if (file != null){
-            try {
-                return ftpServiceProvider.upload(file);
-            } catch (FileUploadException e) {
-                e.printStackTrace();
-                return "fail to upload";
-            }
-        }
-        return "file is null";
+    @PostMapping(value = "/test/json")
+    public String testTransfer(@RequestBody TeacherEntity teacherEntity){
+        System.out.println(teacherEntity);
+        return "success";
     }
 
 }

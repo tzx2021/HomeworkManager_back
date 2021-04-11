@@ -16,7 +16,8 @@ public enum MemberType {
      */
     STUDENT("student"),
     PARENT("parent"),
-    CLASS("class");
+    CLASS("class"),
+    COURSE("course");
 
     private final String name;
 

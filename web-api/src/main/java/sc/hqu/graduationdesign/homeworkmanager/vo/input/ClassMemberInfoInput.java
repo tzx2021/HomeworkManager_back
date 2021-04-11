@@ -2,6 +2,8 @@ package sc.hqu.graduationdesign.homeworkmanager.vo.input;
 
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import sc.hqu.graduationdesign.homeworkmanager.vo.BaseVo;
 
 /**
  * @author tzx
@@ -9,7 +11,7 @@ import lombok.Data;
  */
 @Data
 @ApiModel(value = "班级成员信息数据对象")
-public class ClassMemberInfoInput {
+public class ClassMemberInfoInput{
 
     private Long studentNo;
     private String name;

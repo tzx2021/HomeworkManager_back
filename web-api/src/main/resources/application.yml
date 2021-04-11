@@ -19,7 +19,6 @@ spring:
       max-wait-millis: 1000                                 # 等待连接获取的最大超时时间
 
 
-
 #自定义的消息发布starter模块配置
 message:
   publish:

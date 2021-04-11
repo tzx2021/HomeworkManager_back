@@ -1,5 +1,6 @@
 package sc.hqu.graduationdesign.homeworkmanager.api;
 
+import com.alibaba.fastjson.PropertyNamingStrategy;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,13 +32,14 @@ public class MemberController {
     @ApiOperation(value = "获取班级成员分页数据")
     @PostMapping(value = "/page")
     public Object getMemberPage(@RequestBody PageQueryInput input){
-        Long account = Long.getLong(SecurityContextUtil.userDetails().getUsername());
+        Long account = Long.valueOf(SecurityContextUtil.userDetails().getUsername());
         return classService.getClassStudentPage(account, input.getPageSize(), input.getPageNum());
     }
 
     @ApiOperation(value = "班级成员删除")
     @PostMapping(value = "/delete")
     public GenericResponse deleteMember(@RequestBody DeleteMemberInput input){
+        System.out.println(input);
         classService.removeClassStudent(input.getStudentNo());
         return GenericResponse.success();
     }

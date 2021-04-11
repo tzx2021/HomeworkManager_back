@@ -1,7 +1,8 @@
 package sc.hqu.graduationdesign.homeworkmanager.consumer.dto;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Data;
-
 import java.util.List;
 
 /**
@@ -15,11 +16,11 @@ public class NotificationCreateDto {
     private String title;
     private String content;
     private Integer type;
-    private Boolean confirmable;
+    private Integer confirmable;
     private Integer totalConfirm = 0;
     private String memberType;
     private List<SimpleContactData> contactDataList;
-    private List<SimpleFileDataDto> attachments;
+    private List<FilePublishDto> attachments;
 
     @Data
     public static class SimpleContactData{

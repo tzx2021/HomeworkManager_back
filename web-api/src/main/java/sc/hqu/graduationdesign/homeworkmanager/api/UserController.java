@@ -29,7 +29,7 @@ public class UserController {
     @ApiOperation(value = "更新登录密码")
     @PostMapping(value = "/update/pass")
     public GenericResponse updatePass(@RequestBody UpdatePassInput input){
-        Long account = Long.getLong(SecurityContextUtil.userDetails().getUsername());
+        Long account = Long.valueOf(SecurityContextUtil.userDetails().getUsername());
         userService.updatePass(account,input.getPassword());
         return GenericResponse.success();
     }
@@ -37,7 +37,7 @@ public class UserController {
     @ApiOperation(value = "更新绑定手机")
     @PostMapping(value = "/update/phone")
     public GenericResponse updatePhone(@RequestBody UpdatePhoneInput input){
-        Long account = Long.getLong(SecurityContextUtil.userDetails().getUsername());
+        Long account = Long.valueOf(SecurityContextUtil.userDetails().getUsername());
         userService.updatePhoneNum(account,input.getPhone());
         return GenericResponse.success();
     }

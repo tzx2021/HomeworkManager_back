@@ -18,7 +18,7 @@ public interface TeacherCourseDao {
      * 插入教师课程关联信息记录
      * @param tce       {@link TeacherCourseEntity}
      */
-    @Insert("insert into t_teacher_course(teacher_no,course_id)")
+    @Insert("insert into t_teacher_course(teacher_no,course_id) values(#{teacherNo},#{courseId})")
     void insertTeacherCourse(TeacherCourseEntity tce);
 
     /**

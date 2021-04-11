@@ -1,11 +1,10 @@
 package sc.hqu.graduationdesign.homeworkmanager.consumer.service.impl;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import sc.hqu.graduationdesign.homeworkmanager.consumer.dto.SimpleFileDataDto;
+import sc.hqu.graduationdesign.homeworkmanager.consumer.dto.FilePublishDto;
 import sc.hqu.graduationdesign.homeworkmanager.consumer.service.FileService;
 import sc.hqu.graduationdesign.homeworkmanager.entity.FileEntity;
 import sc.hqu.graduationdesign.homeworkmanager.entity.FilePublishEntity;
@@ -17,6 +16,7 @@ import sc.hqu.graduationdesign.homeworkmanager.utils.SecurityContextUtil;
 import vinfer.learnjava.queryhelper.annotation.QueryHelper;
 import vinfer.learnjava.queryhelper.constant.InterceptMode;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -43,28 +43,14 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public SimpleFileDataDto upload(MultipartFile file) {
-        SimpleFileDataDto simpleFile = new SimpleFileDataDto();
-        String originalFilename = file.getOriginalFilename();
+    public String upload(MultipartFile file) {
         // 文件url
         String fileAccessUrl = fileServiceProvider.upload(file);
         if (fileAccessUrl != null){
-            String type = fileServiceProvider.getType(originalFilename);
-            // 通过security的上下文对象获取当前登录用户的用户名，即这里需要的account属性
-            Long account = Long.getLong(SecurityContextUtil.userDetails().getUsername());
-            FileEntity fileEntity = new FileEntity();
-            fileEntity.setAccount(account);
-            fileEntity.setName(originalFilename);
-            fileEntity.setType(type);
-            fileEntity.setUploadDate(System.currentTimeMillis());
-            fileEntity.setUrl(fileAccessUrl);
-            // 将文件记录保存到数据库中
-            fileDao.insertFile(fileEntity);
-            BeanUtils.copyProperties(fileEntity,simpleFile);
+            return fileAccessUrl;
         }else {
             throw new FileUploadException("Fail to Uploaded file!");
         }
-        return simpleFile;
     }
 
     @Override
@@ -73,9 +59,8 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public boolean deleteFile(Long id, boolean deleteFromServer) {
+    public void deleteFile(Long id, boolean deleteFromServer) {
         fileDao.deleteFileById(id, Calendar.getInstance().getTimeInMillis());
-        return true;
     }
 
     @Override
@@ -85,7 +70,62 @@ public class FileServiceImpl implements FileService {
 
     @Override
     @Transactional(rollbackFor = {RuntimeException.class,Exception.class})
-    public void publishFiles(List<FilePublishEntity> filePublishEntities) {
-        filePublishDao.batchInsertFilePublish(filePublishEntities);
+    public void batchCreate(List<FilePublishDto> filePublishDtoList, int publishState) {
+        List<FilePublishEntity> filePublishEntities = new ArrayList<>();
+        if (filePublishDtoList.size() > 1){
+            filePublishDtoList.forEach(filePublishDto -> {
+                String url = filePublishDto.getUrl();
+                String name = filePublishDto.getName();
+                FileEntity fileEntity = processFileEntity(name,url,publishState);
+                fileDao.insertFile(fileEntity);
+                if (publishState == 1){
+                    FilePublishEntity fpe = new FilePublishEntity();
+                    fpe.setFid(fileEntity.getId());
+                    fpe.setPid(filePublishDto.getPid());
+                    fpe.setPublishType(filePublishDto.getType());
+                    filePublishEntities.add(fpe);
+                }
+            });
+            if (filePublishEntities.size() > 0){
+                filePublishDao.batchInsertFilePublish(filePublishEntities);
+            }
+        }else if (filePublishDtoList.size() == 1){
+            create(filePublishDtoList.get(0),publishState);
+        }
     }
+
+    @Override
+    @Transactional(rollbackFor = {RuntimeException.class,Exception.class})
+    public void create(FilePublishDto filePublishDto,int publish) {
+        System.out.println(filePublishDto);
+        FileEntity fileEntity = processFileEntity(filePublishDto.getName(),filePublishDto.getUrl(),publish);
+        fileDao.insertFile(fileEntity);
+        if (publish == 1){
+            FilePublishEntity fpe = new FilePublishEntity();
+            fpe.setPid(filePublishDto.getPid());
+            fpe.setFid(fileEntity.getId());
+            fpe.setPublishType(filePublishDto.getType());
+            filePublishDao.insertFilePublish(fpe);
+        }
+    }
+
+    private FileEntity processFileEntity(String filename,String url,int publish){
+        FileEntity fileEntity = new FileEntity();
+        Long account = Long.valueOf(SecurityContextUtil.userDetails().getUsername());
+        fileEntity.setAccount(account);
+        fileEntity.setName(filename);
+        fileEntity.setUrl(url);
+        fileEntity.setUploadDate(Calendar.getInstance().getTimeInMillis());
+        fileEntity.setType(getFileType(url));
+        // 由于需要发布文件，因此直接设置发布状态为1
+        fileEntity.setPublishState(publish);
+        return fileEntity;
+    }
+
+    private String getFileType(String fileUrl){
+        // 获取文件类型
+        String[] parts = fileUrl.split("\\.");
+        return parts[parts.length - 1];
+    }
+
 }

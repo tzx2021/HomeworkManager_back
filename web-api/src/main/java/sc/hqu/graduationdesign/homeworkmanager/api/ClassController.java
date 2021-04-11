@@ -14,13 +14,13 @@ import sc.hqu.graduationdesign.homeworkmanager.consumer.service.ClassService;
 import sc.hqu.graduationdesign.homeworkmanager.exception.BusinessException;
 import sc.hqu.graduationdesign.homeworkmanager.model.GenericResponse;
 import sc.hqu.graduationdesign.homeworkmanager.utils.SecurityContextUtil;
+import sc.hqu.graduationdesign.homeworkmanager.utils.TimeFormatUtil;
 import sc.hqu.graduationdesign.homeworkmanager.vo.input.*;
 import sc.hqu.graduationdesign.homeworkmanager.vo.output.ClassMemberDataOutput;
 import sc.hqu.graduationdesign.homeworkmanager.vo.output.ClassMetaDataOutput;
 import sc.hqu.graduationdesign.homeworkmanager.vo.output.SimpleFileOutput;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+
+import java.util.*;
 
 /**
  * @author tzx
@@ -38,19 +38,20 @@ public class ClassController {
     @PostMapping(value = "/list")
     public List<ClassMetaDataOutput> getClassDataList(){
         String username = SecurityContextUtil.userDetails().getUsername();
-        List<ClassDataDto> classDataByTeacherNo = classService.getClassDataByTeacherNo(Long.getLong(username));
+        List<ClassDataDto> classDataByTeacherNo = classService.getClassDataByTeacherNo(Long.valueOf(username));
         List<ClassMetaDataOutput> dataOutputs = new ArrayList<>(classDataByTeacherNo.size());
         // 数据类型转换和映射
         classDataByTeacherNo.forEach(classDataDto -> {
             ClassMetaDataOutput output = new ClassMetaDataOutput();
             BeanUtils.copyProperties(classDataDto,output);
-
+            // 转换时间
+            output.setCreateDate(TimeFormatUtil.format(classDataDto.getCreateDate()));
             // 映射学生数据
             List<ClassStudentDto> studentDtoList = classDataDto.getStudentDtoList();
             List<ClassMemberDataOutput> memberData = new ArrayList<>(studentDtoList.size());
             studentDtoList.forEach(classStudentDto -> {
                 ClassMemberDataOutput memberDataOutput = new ClassMemberDataOutput();
-                BeanUtils.copyProperties(classDataDto,memberDataOutput);
+                BeanUtils.copyProperties(classStudentDto,memberDataOutput);
                 memberData.add(memberDataOutput);
             });
 
@@ -93,6 +94,7 @@ public class ClassController {
             output.setClassFiles(classFiles);
             dataOutputs.add(output);
         });
+        System.out.println(dataOutputs);
         return dataOutputs;
     }
 
@@ -102,6 +104,7 @@ public class ClassController {
     public GenericResponse createClass(@RequestBody CreateClassInput input){
         ClassCreateDto classCreateDto = new ClassCreateDto();
         BeanUtils.copyProperties(input,classCreateDto);
+        classCreateDto.setHeadTeacherNo(Long.valueOf(SecurityContextUtil.userDetails().getUsername()));
         classService.create(classCreateDto);
         return GenericResponse.successWithData(classCreateDto);
     }
@@ -118,6 +121,7 @@ public class ClassController {
     @ApiOperation(value = "导入班级成员")
     @PostMapping(value = "/member/add")
     public GenericResponse addMember(@RequestBody AddClassMemberInput input){
+        System.out.println(input);
         ClassStudentAddDto addDto = new ClassStudentAddDto();
         addDto.setClassId(input.getClassId());
         List<ClassMemberInfoInput> memberList = input.getMemberList();

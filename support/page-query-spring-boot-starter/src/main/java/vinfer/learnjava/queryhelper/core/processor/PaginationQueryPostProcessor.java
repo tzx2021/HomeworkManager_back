@@ -47,36 +47,40 @@ public class PaginationQueryPostProcessor implements InterceptionPostProcessor{
         //Mybatis对查询结果的保存都是使用List
         if (List.class.isAssignableFrom(queryResult.getClass())){
             List<Object> dataCollection = (List<Object>) queryResult;
-            long total = dataCollection.size();
-            queryDataPack.setTotal(total);
-            //使用MODIFY_RESULT查询模式时，所有查询数据的属性字段会被赋值
-            queryDataPack.setDataCollection(dataCollection);
-            int pageSize = queryDataPack.getPageSize();
-            int currentPage = queryDataPack.getPageNum();
-            //由于是对结果集做数据分片，因此lastPage需要计算
-            int alonePageSize = (int) (total % pageSize);
-            int plusPage = alonePageSize > 0 ? 1 : 0;
-            int lastPage = (int)(total / pageSize) + plusPage;
-            //将lastPage保存到queryDataPack中
-            queryDataPack.setTotalPage(lastPage);
-            //计算offset和limit
-            //offset：数据分片的起始下标  limit：数据分片的截止下标
-            int offset = pageSize * (currentPage - 1);
-            int limit = pageSize;
-            Collection<Object> pageData = new ArrayList<>(pageSize);
-            //如果当前页码大于等于最后一页，那么使用最后一页
-            if (currentPage >= lastPage){
-                //将最后一页设置为当前页码
-                queryDataPack.setPageNum(lastPage);
-                offset = pageSize * (lastPage - 1);
-                if (alonePageSize > 0){
-                    limit = alonePageSize;
+            if (dataCollection.size() > 0){
+                long total = dataCollection.size();
+                queryDataPack.setTotal(total);
+                //使用MODIFY_RESULT查询模式时，所有查询数据的属性字段会被赋值
+                queryDataPack.setDataCollection(dataCollection);
+                int pageSize = queryDataPack.getPageSize();
+                int currentPage = queryDataPack.getPageNum();
+                //由于是对结果集做数据分片，因此lastPage需要计算
+                int alonePageSize = (int) (total % pageSize);
+                int plusPage = alonePageSize > 0 ? 1 : 0;
+                int lastPage = (int)(total / pageSize) + plusPage;
+                //将lastPage保存到queryDataPack中
+                queryDataPack.setTotalPage(lastPage);
+                //计算offset和limit
+                //offset：数据分片的起始下标  limit：数据分片的截止下标
+                int offset = pageSize * (currentPage - 1);
+                int limit = pageSize;
+                Collection<Object> pageData = new ArrayList<>(pageSize);
+                //如果当前页码大于等于最后一页，那么使用最后一页
+                if (currentPage >= lastPage){
+                    //将最后一页设置为当前页码
+                    queryDataPack.setPageNum(lastPage);
+                    offset = pageSize * (lastPage - 1);
+                    if (alonePageSize > 0){
+                        limit = alonePageSize;
+                    }
                 }
+                for (int i = offset; i < limit + offset; i++) {
+                    pageData.add(dataCollection.get(i));
+                }
+                return pageData;
+            }else {
+                return queryResult;
             }
-            for (int i = offset; i < limit + offset; i++) {
-                pageData.add(dataCollection.get(i));
-            }
-            return pageData;
         }
 
         throw new QueryResultProcessException("Can't handle this query returning type: ["+queryResult.getClass()+"], " +

@@ -5,9 +5,9 @@
 <mapper namespace="sc.hqu.graduationdesign.homeworkmanager.mapper.NotificationPublishDao">
 
     <insert id="batchInsert">
-        insert into t_notification_pulish(pid,nid,member_type) values
+        insert into t_notification_publish(nid,pid,member_type) values
         <foreach collection="npeList" item="npe" separator=",">
-            (#{npe.pid},#{npe.nid},#{npe.memberType})
+            (#{npe.nid},#{npe.pid},#{npe.memberType})
         </foreach>
     </insert>
 

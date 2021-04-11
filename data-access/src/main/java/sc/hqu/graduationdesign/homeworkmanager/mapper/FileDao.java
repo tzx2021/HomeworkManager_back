@@ -27,20 +27,18 @@ public interface FileDao {
     /**
      * 通过发布对象的id查询文件，发布对象可以是班级、课程以及通知
      * @param pid           文件发布对象的id
+     * @param publishType   文件发布对象的类型
      * @return              {@link FileEntity}
      */
-    @Select("select t_file.id,name,url from t_file,t_file_publish where t_file.id = t_file_publish.id and t_file.delete_at = 0 " +
-            "and t_file_publish.id=pid")
-    List<FileEntity> queryByPublishId(Long pid);
+    @Select("select t_file.id,name,url from t_file,t_file_publish where t_file.id = t_file_publish.fid and t_file.delete_at = 0 " +
+            "and t_file_publish.pid=#{pid} and t_file_publish.publish_type = #{publishType}")
+    List<FileEntity> queryPublishFile(@Param("pid") Long pid,@Param("publishType") Integer publishType);
 
     /**
      * 插入文件信息记录
      * @param fe        {@link FileEntity}
      */
-    @Insert("insert into t_file(account,publish_date,name,url,type,upload_date) values(" +
-            "#{account},#{publishState},#{name},#{url},#{type},#{uploadDate}"
-            + ")")
-    void insertFile(FileEntity fe);
+    void insertFile(@Param("fe") FileEntity fe);
 
     /**
      * 更新文件的发布状态为已发布
@@ -62,7 +60,7 @@ public interface FileDao {
      * @param fid       文件id
      * @param deleteAt  删除时间戳
      */
-    @Update("update t_file set delete_at=#{deleteAt} where fid=#{fid}")
+    @Update("update t_file set delete_at=#{deleteAt} where id=#{fid}")
     void deleteFileById(@Param("fid") Long fid,@Param("deleteAt") Long deleteAt);
 
 }

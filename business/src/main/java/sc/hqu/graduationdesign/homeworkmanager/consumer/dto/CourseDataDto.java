@@ -16,6 +16,7 @@ public class CourseDataDto {
     private Float credit;
     private String classTime;
     private Integer coursePeriod;
+    private Long createDate;
     private List<CourseElectionData> courseElectionData;
     private List<SimpleFileDataDto> courseFiles;
 

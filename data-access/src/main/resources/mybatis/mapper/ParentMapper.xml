@@ -8,7 +8,7 @@
         select class_id,student_no,parent_id,`name`,gender,contact from
         v_class_student_parent where parent_id in
         <foreach collection="parentIdList" item="pid" open="(" separator="," close=")">
-            pid
+            #{pid}
         </foreach>
     </select>
 

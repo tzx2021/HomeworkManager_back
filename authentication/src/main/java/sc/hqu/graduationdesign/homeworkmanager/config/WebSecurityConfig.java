@@ -49,6 +49,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             "/images/**",
             "/css/**",
             "/js/**",
+            // 文件上传的路径必须要开放
+            "/api/homeworkmanager/file/upload"
     };
 
     private final String[] defaultAuthWhiteList = {

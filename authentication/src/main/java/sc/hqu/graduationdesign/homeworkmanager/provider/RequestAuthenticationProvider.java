@@ -55,7 +55,7 @@ public class RequestAuthenticationProvider implements AuthenticationProvider {
                 (String) userToken.get("username"),
                 "password",
                 (String) userToken.get("teacherName"),
-                (String) userToken.get("gender"),
+                (Integer) userToken.get("gender"),
                 (String) userToken.get("contact"),
                 (String) userToken.get("address"),
                 (String) userToken.get("jobTitle"),

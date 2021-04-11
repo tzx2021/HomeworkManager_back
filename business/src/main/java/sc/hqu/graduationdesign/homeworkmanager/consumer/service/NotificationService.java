@@ -1,9 +1,6 @@
 package sc.hqu.graduationdesign.homeworkmanager.consumer.service;
 
-import sc.hqu.graduationdesign.homeworkmanager.consumer.dto.MemberNotifyDto;
-import sc.hqu.graduationdesign.homeworkmanager.consumer.dto.NotificationCreateDto;
-import sc.hqu.graduationdesign.homeworkmanager.consumer.dto.NotificationMemberDto;
-import sc.hqu.graduationdesign.homeworkmanager.consumer.dto.SimpleFileDataDto;
+import sc.hqu.graduationdesign.homeworkmanager.consumer.dto.*;
 
 import java.util.List;
 
@@ -43,7 +40,7 @@ public interface NotificationService {
      * @param account       系统账号即教工号
      * @return              返回创建完成的通知数据对象
      */
-    NotificationCreateDto create(NotificationCreateDto dto,Long account);
+    NotificationOutputDto create(NotificationCreateDto dto, Long account);
 
     /**
      * 短信提醒成员

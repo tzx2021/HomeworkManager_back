@@ -22,7 +22,7 @@ public interface ParentDao {
      * @param cid       班级id
      * @return          {@link ClassStudentParentView}
      */
-    @Select("select student_no,parent_id,name,contact from v_class_student_parent where class_id=#{cid}")
+    @Select("select class_id,student_no,parent_id,gender,name,contact from v_class_student_parent where class_id=#{cid}")
     List<ClassStudentParentView> queryStudentParentByClassIdInView(Long cid);
 
     /**

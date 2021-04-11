@@ -9,16 +9,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import sc.hqu.graduationdesign.homeworkmanager.constant.NotificationType;
-import sc.hqu.graduationdesign.homeworkmanager.consumer.dto.MemberNotifyDto;
-import sc.hqu.graduationdesign.homeworkmanager.consumer.dto.NotificationCreateDto;
-import sc.hqu.graduationdesign.homeworkmanager.consumer.dto.SimpleFileDataDto;
+import sc.hqu.graduationdesign.homeworkmanager.consumer.dto.*;
 import sc.hqu.graduationdesign.homeworkmanager.consumer.service.NotificationService;
 import sc.hqu.graduationdesign.homeworkmanager.model.GenericResponse;
 import sc.hqu.graduationdesign.homeworkmanager.utils.SecurityContextUtil;
-import sc.hqu.graduationdesign.homeworkmanager.vo.input.CreateNotificationInput;
-import sc.hqu.graduationdesign.homeworkmanager.vo.input.NotificationDataOutput;
-import sc.hqu.graduationdesign.homeworkmanager.vo.input.NotifyMembersInput;
-import sc.hqu.graduationdesign.homeworkmanager.vo.input.PageQueryInput;
+import sc.hqu.graduationdesign.homeworkmanager.vo.input.*;
 import sc.hqu.graduationdesign.homeworkmanager.vo.output.GenericPageDataOutput;
 import sc.hqu.graduationdesign.homeworkmanager.vo.output.SimpleFileOutput;
 
@@ -42,48 +37,59 @@ public class NotificationController {
     @ApiOperation(value = "获取通知分页数据")
     @PostMapping(value = "/page")
     public Object getNotificationPage(@RequestBody PageQueryInput input){
-        Long account = Long.getLong(SecurityContextUtil.userDetails().getUsername());
+        System.out.println(input);
+        Long account = Long.valueOf(SecurityContextUtil.userDetails().getUsername());
         return notificationService.getNotificationPageData(account, input.getPageSize(), input.getPageNum());
+    }
+
+    @ApiOperation(value = "获取通知的成员信息")
+    @PostMapping(value = "/members")
+    public List<NotificationMemberDto> getNotifyMembers(@RequestBody NotificationIdInput input){
+        return notificationService.getMemberDataById(input.getId());
+    }
+
+    @ApiOperation(value = "获取附件通知的附件信息")
+    @PostMapping(value = "/files")
+    public List<SimpleFileDataDto> getNotificationFiles(@RequestBody NotificationIdInput input){
+        return notificationService.getFileDataById(input.getId());
     }
 
     @ApiOperation(value = "发布通知")
     @PostMapping(value = "/publish")
     public GenericResponse publishNotification(@RequestBody CreateNotificationInput input){
+        System.out.println(input);
         NotificationCreateDto createDto = new NotificationCreateDto();
         BeanUtils.copyProperties(input,createDto);
+        if (input.isConfirmable()){
+            createDto.setConfirmable(1);
+        }else {
+            createDto.setConfirmable(0);
+        }
 
         // 封装联系人数据
         List<NotificationCreateDto.SimpleContactData> contactDataList = new ArrayList<>();
-        if (input.getType().equals(NotificationType.SMS.ordinal())){
-            List<NotificationCreateDto.SimpleContactData> simpleContactData = input.getContactDataList();
-            simpleContactData.forEach(scd -> {
-                NotificationCreateDto.SimpleContactData contactData = new NotificationCreateDto.SimpleContactData();
-                BeanUtils.copyProperties(scd,contactData);
-                contactDataList.add(contactData);
-            });
-        }
+        // 发布对象的pid统一封装在SimpleContactData中
+        List<NotificationCreateDto.SimpleContactData> simpleContactData = input.getContactDataList();
+        simpleContactData.forEach(scd -> {
+            NotificationCreateDto.SimpleContactData contactData = new NotificationCreateDto.SimpleContactData();
+            BeanUtils.copyProperties(scd,contactData);
+            contactDataList.add(contactData);
+        });
 
         // 封装附件数据
-        List<SimpleFileDataDto> attachments = new ArrayList<>();
-        if (input.getType().equals(NotificationType.ATTACHMENT.ordinal())){
-            List<SimpleFileOutput> simpleFile = input.getAttachments();
-            simpleFile.forEach(file -> {
-                SimpleFileDataDto dto = new SimpleFileDataDto();
-                BeanUtils.copyProperties(file,dto);
-                attachments.add(dto);
-            });
-        }
+        List<FilePublishDto> attachments = input.getAttachments();
 
         createDto.setContactDataList(contactDataList);
         createDto.setAttachments(attachments);
-        Long account = Long.getLong(SecurityContextUtil.userDetails().getUsername());
-        notificationService.create(createDto,account);
-        return GenericResponse.success();
+        Long account = Long.valueOf(SecurityContextUtil.userDetails().getUsername());
+        NotificationOutputDto dto = notificationService.create(createDto, account);
+        return GenericResponse.successWithData(dto);
     }
 
     @ApiOperation(value = "短信提醒成员")
     @PostMapping(value = "/notify")
     public GenericResponse notifyMembers(@RequestBody NotifyMembersInput input){
+        System.out.println(input);
         // 短信提醒只需要成员的身份、姓名和练习方式
         MemberNotifyDto dto = new MemberNotifyDto();
         dto.setMemberType(input.getMemberType());
@@ -98,7 +104,5 @@ public class NotificationController {
         notificationService.notifyMember(dto);
         return GenericResponse.success();
     }
-
-    // TODO: 2021/4/9 读取通知成员信息和通知文件数据
 
 }

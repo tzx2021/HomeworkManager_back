@@ -5,11 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import sc.hqu.graduationdesign.homeworkmanager.constant.FilePublishType;
 import sc.hqu.graduationdesign.homeworkmanager.constant.MemberType;
-import sc.hqu.graduationdesign.homeworkmanager.consumer.dto.MemberNotifyDto;
-import sc.hqu.graduationdesign.homeworkmanager.consumer.dto.NotificationCreateDto;
-import sc.hqu.graduationdesign.homeworkmanager.consumer.dto.NotificationMemberDto;
-import sc.hqu.graduationdesign.homeworkmanager.consumer.dto.SimpleFileDataDto;
+import sc.hqu.graduationdesign.homeworkmanager.consumer.dto.*;
+import sc.hqu.graduationdesign.homeworkmanager.consumer.service.FileService;
 import sc.hqu.graduationdesign.homeworkmanager.consumer.service.NotificationService;
 import sc.hqu.graduationdesign.homeworkmanager.entity.FilePublishEntity;
 import sc.hqu.graduationdesign.homeworkmanager.entity.NotificationEntity;
@@ -46,7 +45,13 @@ public class NotificationServiceImpl implements NotificationService {
     private StudentDao studentDao;
 
     @Autowired
+    private StudentCourseDao studentCourseDao;
+
+    @Autowired
     private ParentDao parentDao;
+
+    @Autowired
+    private FileService fileService;
 
     @QueryHelper(mapperClass = NotificationDao.class,interceptMode = InterceptMode.MODIFY_RESULT)
     @Override
@@ -84,6 +89,7 @@ public class NotificationServiceImpl implements NotificationService {
                     notificationMemberDtoList.add(memberDto);
                 });
             }else if (memberType.equals(MemberType.STUDENT.getName())){
+                System.out.println(npeList);
                 // 通过学生id查询学生信息
                 List<ClassStudentView> viewList = studentDao.querySimpleInfoByStudentNoListInView(
                         npeList.stream().map(NotificationPublishEntity::getPid).collect(Collectors.toList()));
@@ -112,14 +118,15 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public List<SimpleFileDataDto> getFileDataById(Long notificationId) {
-        return filePublishDao.queryAllByPublishId(notificationId).stream()
+        return filePublishDao.queryAllByPublishId(notificationId, FilePublishType.NOTIFICATION.getType()).stream()
                 .map(fileEntity -> new SimpleFileDataDto(fileEntity.getId(),fileEntity.getName(),fileEntity.getUrl()))
                 .collect(Collectors.toList());
     }
 
     @Override
     @Transactional(rollbackFor = {Exception.class,RuntimeException.class})
-    public NotificationCreateDto create(NotificationCreateDto dto,Long account) {
+    public NotificationOutputDto create(NotificationCreateDto dto, Long account) {
+
         NotificationEntity notificationEntity = new NotificationEntity();
         BeanUtils.copyProperties(dto,notificationEntity);
         notificationEntity.setAccount(account);
@@ -128,13 +135,23 @@ public class NotificationServiceImpl implements NotificationService {
 
         Long publishDate = Calendar.getInstance().getTimeInMillis();
         notificationEntity.setCreateDate(publishDate);
+
+        List<Long> publishIdList;
+        // 如果通知对象是班级，那么转换为student，并且查询该课程选课的所有学生
+        if (MemberType.COURSE.getName().equals(dto.getMemberType())){
+            publishIdList = handleCourseElectionStudent(dto.getContactDataList().get(0).getPublishId());
+            // 转换为student
+            dto.setMemberType(MemberType.STUDENT.getName());
+        }else {
+            publishIdList = dto.getContactDataList().stream().map(NotificationCreateDto.SimpleContactData::getPublishId).collect(Collectors.toList());
+        }
+        String memberType = dto.getMemberType();
+        notificationEntity.setMemberType(memberType);
         // 保存通知记录
         notificationDao.insertNotification(notificationEntity);
         Long nid = notificationEntity.getId();
         dto.setId(nid);
-        String memberType = dto.getMemberType();
         // 保存通知发布记录
-        List<Long> publishIdList = dto.getContactDataList().stream().map(NotificationCreateDto.SimpleContactData::getPublishId).collect(Collectors.toList());
         publishIdList.forEach(pid -> {
             NotificationPublishEntity notificationPublishEntity = new NotificationPublishEntity();
             notificationPublishEntity.setNid(nid);
@@ -146,10 +163,12 @@ public class NotificationServiceImpl implements NotificationService {
 
         // 消息推送的公共部分的数据封装
         NotificationMessage message = new NotificationMessage();
+        // 数字转布尔
+        message.setConfirmable(notificationEntity.getConfirmable() == 1);
         BeanUtils.copyProperties(notificationEntity,message);
         message.setPublishDate(publishDate);
         NotificationPublish publish = new NotificationPublish();
-        publish.setPublishTo(contactDataList.stream().map(NotificationCreateDto.SimpleContactData::getPublishId).collect(Collectors.toList()));
+        publish.setPublishTo(publishIdList);
         publish.setPublisher(account);
         String memberClass = "class";
         if (memberType.equals(memberClass)){
@@ -159,7 +178,17 @@ public class NotificationServiceImpl implements NotificationService {
         }
         // 处理消息推送
         handleMessagePushing(dto,publish,message);
-        return dto;
+        NotificationOutputDto outputDto = new NotificationOutputDto();
+        BeanUtils.copyProperties(notificationEntity,outputDto);
+        outputDto.setConfirmCount(contactDataList.size());
+        outputDto.setMemberType(memberType);
+        return outputDto;
+    }
+
+    private List<Long> handleCourseElectionStudent(Long courseId){
+        return studentCourseDao.queryStudentCourseElectionByCourseId(courseId).stream()
+                .map(StudentCourseElectionView::getStudentNo)
+                .collect(Collectors.toList());
     }
 
     @Transactional(rollbackFor = {RuntimeException.class,Exception.class})
@@ -178,24 +207,23 @@ public class NotificationServiceImpl implements NotificationService {
                 CommonAttachmentNotification attachmentNotification = new CommonAttachmentNotification();
                 attachmentNotification.setMessage(message);
                 attachmentNotification.setPublish(publish);
+
                 // 生成附件数据
                 NotificationAttachment attachment = new NotificationAttachment();
                 Map<String,String> attachmentData = new HashMap<>(8);
-                List<SimpleFileDataDto> attachments = dto.getAttachments();
-                // 生成文件通知关联记录
-                List<FilePublishEntity> filePublishEntities = new ArrayList<>(attachments.size());
-                attachments.forEach(simpleFileDataDto -> {
-                    attachmentData.put(simpleFileDataDto.getUrl(),simpleFileDataDto.getName());
-                    FilePublishEntity fpe = new FilePublishEntity();
-                    fpe.setFid(simpleFileDataDto.getId());
-                    fpe.setPid(dto.getId());
+                List<FilePublishDto> attachments = dto.getAttachments();
+                attachments.forEach(att -> {
+                    attachmentData.put(att.getUrl(),att.getName());
+                    att.setPid(dto.getId());
+                    att.setType(3);
                 });
+                // 对文件记录进行创建并发布，publish为1代表要发布文件
+                fileService.batchCreate(attachments,1);
+
                 // 推送附件通知
                 attachment.setAttachmentData(attachmentData);
                 attachmentNotification.setAttachment(attachment);
                 messagePublishProvider.publishAsync(NotificationMessageConverter.convertToAttachmentMessage(attachmentNotification));
-                // 保存文件通知的关联记录
-                filePublishDao.batchInsertFilePublish(filePublishEntities);
                 break;
             // 短信通知
             case 2:

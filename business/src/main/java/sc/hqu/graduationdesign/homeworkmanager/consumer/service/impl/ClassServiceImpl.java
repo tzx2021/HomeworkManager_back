@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sc.hqu.graduationdesign.homeworkmanager.constant.ErrorCode;
+import sc.hqu.graduationdesign.homeworkmanager.constant.FilePublishType;
 import sc.hqu.graduationdesign.homeworkmanager.consumer.dto.*;
 import sc.hqu.graduationdesign.homeworkmanager.consumer.service.ClassService;
 import sc.hqu.graduationdesign.homeworkmanager.entity.*;
@@ -79,7 +80,7 @@ public class ClassServiceImpl implements ClassService {
             });
 
             // 查找并复制发布到该班级的文件
-            List<FileEntity> fileEntities = fileDao.queryByPublishId(classId);
+            List<FileEntity> fileEntities = fileDao.queryPublishFile(classId, FilePublishType.CLASS.getType());
             List<SimpleFileDataDto> fileDataDtoList = new ArrayList<>(fileEntities.size());
             fileEntities.forEach(fileEntity -> {
                 SimpleFileDataDto simpleFileDataDto = new SimpleFileDataDto();
@@ -91,6 +92,7 @@ public class ClassServiceImpl implements ClassService {
             classDataDto.setStudentDtoList(classStudentDtoList);
             classDataDto.setStudentParentDtoList(studentParentDtoList);
             classDataDto.setFileDataDtoList(fileDataDtoList);
+            classDataDtoList.add(classDataDto);
         });
         return classDataDtoList;
     }
@@ -98,7 +100,7 @@ public class ClassServiceImpl implements ClassService {
     @QueryHelper(mapperClass = StudentDao.class,interceptMode = InterceptMode.MODIFY_RESULT)
     @Override
     public Object getClassStudentPage(Long teacherNo, int pageSize, int pageNum) {
-        return studentDao.queryFullInfoByClassIdInView(teacherNo);
+        return studentDao.queryAllStudentByTeacherNo(teacherNo);
     }
 
     @Override
@@ -173,6 +175,8 @@ public class ClassServiceImpl implements ClassService {
             studentDao.batchInsertStudent(studentEntities);
             // 批量保存家长记录
             parentDao.batchInsertParent(parentEntities);
+            // 更新班级总学生数
+            classDao.updateClassStudentNum(classId,studentEntities.size());
         }
     }
 

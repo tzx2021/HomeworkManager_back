@@ -12,6 +12,7 @@ import sc.hqu.graduationdesign.homeworkmanager.consumer.dto.*;
 import sc.hqu.graduationdesign.homeworkmanager.consumer.service.CourseService;
 import sc.hqu.graduationdesign.homeworkmanager.model.GenericResponse;
 import sc.hqu.graduationdesign.homeworkmanager.utils.SecurityContextUtil;
+import sc.hqu.graduationdesign.homeworkmanager.utils.TimeFormatUtil;
 import sc.hqu.graduationdesign.homeworkmanager.vo.input.CreateCourseInput;
 import sc.hqu.graduationdesign.homeworkmanager.vo.input.DeleteCourseInput;
 import sc.hqu.graduationdesign.homeworkmanager.vo.input.UpdateCourseInput;
@@ -36,14 +37,14 @@ public class CourseController {
     @ApiOperation(value = "获取课程信息数据集")
     @PostMapping(value = "/list")
     public List<CourseMetaDataOutput> getCourseMetaDataList(){
-        Long teacherNo = Long.getLong(SecurityContextUtil.userDetails().getUsername());
+        Long teacherNo = Long.valueOf(SecurityContextUtil.userDetails().getUsername());
         List<CourseDataDto> courseDataByTeacherNo = courseService.getCourseDataByTeacherNo(teacherNo);
         // 数据封装和映射
         List<CourseMetaDataOutput> dataOutputs = new ArrayList<>(courseDataByTeacherNo.size());
         courseDataByTeacherNo.forEach(courseDataDto -> {
             CourseMetaDataOutput output = new CourseMetaDataOutput();
             BeanUtils.copyProperties(courseDataDto,output);
-
+            output.setCreateDate(TimeFormatUtil.format(courseDataDto.getCreateDate()));
             // 封装选课数据
             List<CourseElectionData> courseElectionData = courseDataDto.getCourseElectionData();
             List<CourseMetaDataOutput.CourseElectionInfo> electionOutput = new ArrayList<>(courseElectionData.size());

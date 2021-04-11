@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="sc.hqu.graduationdesign.homeworkmanager.mapper.FileDao">
+
+    <insert id="insertFile" useGeneratedKeys="true" parameterType="sc.hqu.graduationdesign.homeworkmanager.entity.FileEntity" keyProperty="fe.id">
+        insert into t_file(account,publish_state,`name`,url,`type`,upload_date) values(
+            #{fe.account},#{fe.publishState},#{fe.name},#{fe.url},#{fe.type},#{fe.uploadDate})
+    </insert>
+
+</mapper>
