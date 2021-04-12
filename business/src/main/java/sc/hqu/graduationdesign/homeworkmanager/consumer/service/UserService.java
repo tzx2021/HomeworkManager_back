@@ -21,4 +21,12 @@ public interface UserService {
      */
     void updatePhoneNum(Long account,String newPhoneNum);
 
+    /**
+     * 验证绑定手机
+     * @param account       教工号
+     * @param phoneNum      手机号
+     * @return              绑定手机正确返回true，否则返回false
+     */
+    boolean verifyPhone(Long account,String phoneNum);
+
 }

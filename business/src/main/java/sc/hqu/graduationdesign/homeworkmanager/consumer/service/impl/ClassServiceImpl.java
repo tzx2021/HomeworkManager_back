@@ -97,6 +97,31 @@ public class ClassServiceImpl implements ClassService {
         return classDataDtoList;
     }
 
+    @Override
+    public List<ClassDataDto> getSimpleClassByTeacherNo(Long teacherNo) {
+        List<ClassEntity> classEntities = classDao.queryAllByTeacherNo(teacherNo);
+        List<ClassDataDto> classDataDtoList = new ArrayList<>(classEntities.size());
+        // 遍历班级信息，查找详细的数据进行赋值
+        classEntities.forEach(classEntity -> {
+            ClassDataDto classDataDto = new ClassDataDto();
+            // 复制班级数据
+            BeanUtils.copyProperties(classEntity,classDataDto);
+            classDataDtoList.add(classDataDto);
+        });
+        return classDataDtoList;
+    }
+
+    @Override
+    public List<ClassStudentView> getAllStudentByTeacherNo(Long teacherNo) {
+        return studentDao.queryAllStudentByTeacherNo(teacherNo);
+    }
+
+    @Override
+    public List<ClassStudentParentView> getAllParentByTeacherNo(Long teacherNo) {
+        return parentDao.queryAllStudentParentByTeacherNo(teacherNo);
+    }
+
+
     @QueryHelper(mapperClass = StudentDao.class,interceptMode = InterceptMode.MODIFY_RESULT)
     @Override
     public Object getClassStudentPage(Long teacherNo, int pageSize, int pageNum) {

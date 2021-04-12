@@ -28,6 +28,12 @@ public class GlobalExceptionHandler {
         return GenericResponse.error(ErrorCode.SERVICE_ERROR);
     }
 
+    @ExceptionHandler(value = RuntimeException.class)
+    public GenericResponse handleRuntimeException(Exception e){
+        logger.error("运行时异常处理: {}",e.getMessage());
+        return GenericResponse.error(ErrorCode.SERVICE_ERROR);
+    }
+
     @ExceptionHandler(value = {ApiException.class})
     public GenericResponse handleApiBusinessException(Exception e){
         logger.error("异常api处理: {}",e.getMessage());

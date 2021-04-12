@@ -8,16 +8,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import sc.hqu.graduationdesign.homeworkmanager.constant.NotificationType;
 import sc.hqu.graduationdesign.homeworkmanager.consumer.dto.*;
 import sc.hqu.graduationdesign.homeworkmanager.consumer.service.NotificationService;
 import sc.hqu.graduationdesign.homeworkmanager.model.GenericResponse;
 import sc.hqu.graduationdesign.homeworkmanager.utils.SecurityContextUtil;
 import sc.hqu.graduationdesign.homeworkmanager.vo.input.*;
-import sc.hqu.graduationdesign.homeworkmanager.vo.output.GenericPageDataOutput;
-import sc.hqu.graduationdesign.homeworkmanager.vo.output.SimpleFileOutput;
-
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +32,6 @@ public class NotificationController {
     @ApiOperation(value = "获取通知分页数据")
     @PostMapping(value = "/page")
     public Object getNotificationPage(@RequestBody PageQueryInput input){
-        System.out.println(input);
         Long account = Long.valueOf(SecurityContextUtil.userDetails().getUsername());
         return notificationService.getNotificationPageData(account, input.getPageSize(), input.getPageNum());
     }

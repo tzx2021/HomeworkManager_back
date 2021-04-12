@@ -70,7 +70,7 @@ public class NotificationServiceImpl implements NotificationService {
                 // 查询班级所有的学生
                 List<ClassStudentView> classStudentViews = new ArrayList<>();
                 npeList.forEach(pe -> {
-                    List<ClassStudentView> viewList = studentDao.querySimpleInfoByClassIdInView(pe.getId()).stream()
+                    List<ClassStudentView> viewList = studentDao.querySimpleInfoByClassIdInView(pe.getPid()).stream()
                             .filter(classStudentView -> {
                                 // 基于学号进行去重过滤
                                 List<Long> stuNoList = classStudentViews.stream()
@@ -106,7 +106,7 @@ public class NotificationServiceImpl implements NotificationService {
                 parentViews.forEach(classStudentParentView -> {
                     NotificationMemberDto memberDto = new NotificationMemberDto();
                     BeanUtils.copyProperties(classStudentParentView,memberDto);
-                    memberDto.setMemberType("家长");
+                    memberDto.setMemberType(classStudentParentView.getStudentName()+"家长");
                     memberDto.setClassName("———");
                     memberDto.setStudentNo(0L);
                     notificationMemberDtoList.add(memberDto);

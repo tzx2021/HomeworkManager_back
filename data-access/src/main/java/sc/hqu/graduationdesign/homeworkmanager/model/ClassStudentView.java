@@ -13,7 +13,7 @@ public class ClassStudentView {
     /**
      * 班级id
      */
-    private Integer classId;
+    private Long classId;
 
     /**
      * 班级名称

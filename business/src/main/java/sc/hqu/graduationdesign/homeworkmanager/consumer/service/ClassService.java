@@ -5,6 +5,8 @@ import sc.hqu.graduationdesign.homeworkmanager.consumer.dto.ClassStudentAddDto;
 import sc.hqu.graduationdesign.homeworkmanager.consumer.dto.ClassUpdateDto;
 import sc.hqu.graduationdesign.homeworkmanager.consumer.dto.ClassCreateDto;
 import sc.hqu.graduationdesign.homeworkmanager.exception.BusinessException;
+import sc.hqu.graduationdesign.homeworkmanager.model.ClassStudentParentView;
+import sc.hqu.graduationdesign.homeworkmanager.model.ClassStudentView;
 
 import java.util.List;
 
@@ -21,6 +23,27 @@ public interface ClassService {
      * @return              {@link ClassDataDto}
      */
     List<ClassDataDto>  getClassDataByTeacherNo(Long teacherNo);
+
+    /**
+     * 根据教工号来获取简易的班级信息
+     * @param teacherNo     教工号
+     * @return              {@link ClassDataDto}
+     */
+    List<ClassDataDto> getSimpleClassByTeacherNo(Long teacherNo);
+
+    /**
+     * 获取所有学生的数据
+     * @param teacherNo     教工号
+     * @return              {@link ClassStudentView}
+     */
+    List<ClassStudentView> getAllStudentByTeacherNo(Long teacherNo);
+
+    /**
+     * 查询所有加载的信息
+     * @param teacherNo     教工号
+     * @return              {@link ClassStudentParentView}
+     */
+    List<ClassStudentParentView> getAllParentByTeacherNo(Long teacherNo);
 
     /**
      * 获取班级学生的分页数据

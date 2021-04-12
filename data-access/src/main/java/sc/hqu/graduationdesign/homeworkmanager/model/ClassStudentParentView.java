@@ -13,7 +13,7 @@ public class ClassStudentParentView {
     /**
      * 班级id
      */
-    private Integer classId;
+    private Long classId;
 
     /**
      * 学号
@@ -28,7 +28,7 @@ public class ClassStudentParentView {
     /**
      * 家长id
      */
-    private Integer parentId;
+    private Long parentId;
 
     /**
      * 家长姓名

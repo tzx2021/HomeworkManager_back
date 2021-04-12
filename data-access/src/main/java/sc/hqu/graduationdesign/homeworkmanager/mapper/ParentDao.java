@@ -33,6 +33,16 @@ public interface ParentDao {
     List<ClassStudentParentView> queryStudentParentByParentIdInView(@Param("parentIdList") List<Long> parentIdList);
 
     /**
+     * 通过教工号查询所有学生的加载信息
+     * @param teacherNo     教工号
+     * @return              {@link ClassStudentParentView}
+     */
+    @Select("select parent_id,student_name,name,gender,contact from v_class_student_parent where class_id in(" +
+            "select class_id from t_class where head_teacher_no=#{teacherNo}"+
+            ")")
+    List<ClassStudentParentView> queryAllStudentParentByTeacherNo(Long teacherNo);
+
+    /**
      * 批量插入家长信息记录
      * @param pes       {@link ParentEntity}
      */

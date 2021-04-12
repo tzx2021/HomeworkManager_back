@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import sc.hqu.graduationdesign.homeworkmanager.constant.ErrorCode;
 import sc.hqu.graduationdesign.homeworkmanager.constant.SmsTemplate;
+import sc.hqu.graduationdesign.homeworkmanager.consumer.service.UserService;
 import sc.hqu.graduationdesign.homeworkmanager.exceptions.MessageSendingException;
 import sc.hqu.graduationdesign.homeworkmanager.model.GenericResponse;
 import sc.hqu.graduationdesign.homeworkmanager.provider.GenericCacheProvider;
@@ -33,6 +34,9 @@ public class SmsController {
     @Autowired
     private GenericShortMessageSendingProvider messageSendingProvider;
 
+    @Autowired
+    private UserService userService;
+
 
     @ApiOperation(value = "发送短信验证码")
     @PostMapping(value = "/send")
@@ -42,15 +46,20 @@ public class SmsController {
         String type = input.getType();
         switch (type){
             case "updatePass":
-                messageSendingProvider.sendingMessage(
-                        phone,
-                        verifyCode,
-                        SmsTemplate.UPDATE_PASS.getTemplateId()
-                );
-                String updatePassKey = type + "_" + phone;
-                // 缓存验证码
-                cacheProvider.set(updatePassKey,verifyCode,5 * 60L, TimeUnit.SECONDS);
-                break;
+                // 需要校验当前的手机号是否是用户绑定的手机号
+                if (userService.verifyPhone(input.getTeacherNo(),phone)){
+                    messageSendingProvider.sendingMessage(
+                            phone,
+                            verifyCode,
+                            SmsTemplate.UPDATE_PASS.getTemplateId()
+                    );
+                    String updatePassKey = type + "_" + phone;
+                    // 缓存验证码
+                    cacheProvider.set(updatePassKey,verifyCode,5 * 60L, TimeUnit.SECONDS);
+                    break;
+                }else {
+                    return GenericResponse.error(ErrorCode.WRONG_BIND_PHONE);
+                }
             case "updatePhone":
                 messageSendingProvider.sendingMessage(
                         phone,
@@ -80,8 +89,11 @@ public class SmsController {
         }else {
             errorCode = ErrorCode.VERIFY_CODE_EXPIRED;
         }
-        if (errorCode.equals(ErrorCode.SUCCESS)){
+        String removeType = "updatePhone";
+        if (errorCode.equals(ErrorCode.SUCCESS) && type.equals(removeType)){
             // 验证通过后需要移除验证码
+            // 仅在此处执行移除updatePhone类型的验证码
+            // updatePass类型的掩码会由密码修改时进行移除
             cacheProvider.remove(cacheKey);
         }
         // SUCCESS时，返回的是成功

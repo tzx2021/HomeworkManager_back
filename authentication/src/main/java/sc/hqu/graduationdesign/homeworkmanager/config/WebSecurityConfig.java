@@ -50,7 +50,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             "/css/**",
             "/js/**",
             // 文件上传的路径必须要开放
-            "/api/homeworkmanager/file/upload"
+            "/api/homeworkmanager/file/upload",
+            // 短信接口也需要开放
+            "/api/homeworkmanager/sms/**",
+            "/api/homeworkmanager/user/update/pass"
     };
 
     private final String[] defaultAuthWhiteList = {

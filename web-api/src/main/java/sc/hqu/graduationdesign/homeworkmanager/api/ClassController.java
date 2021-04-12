@@ -18,6 +18,7 @@ import sc.hqu.graduationdesign.homeworkmanager.utils.TimeFormatUtil;
 import sc.hqu.graduationdesign.homeworkmanager.vo.input.*;
 import sc.hqu.graduationdesign.homeworkmanager.vo.output.ClassMemberDataOutput;
 import sc.hqu.graduationdesign.homeworkmanager.vo.output.ClassMetaDataOutput;
+import sc.hqu.graduationdesign.homeworkmanager.vo.output.SimpleClassOutput;
 import sc.hqu.graduationdesign.homeworkmanager.vo.output.SimpleFileOutput;
 
 import java.util.*;
@@ -94,8 +95,24 @@ public class ClassController {
             output.setClassFiles(classFiles);
             dataOutputs.add(output);
         });
-        System.out.println(dataOutputs);
         return dataOutputs;
+    }
+
+    @ApiOperation(value = "获取所有班级的简易信息")
+    @PostMapping(value = "/all")
+    public List<SimpleClassOutput> getAllClasses(){
+        Long teacherNo = Long.valueOf(SecurityContextUtil.userDetails().getUsername());
+        List<ClassDataDto> simpleClassByTeacherNo = classService.getSimpleClassByTeacherNo(teacherNo);
+        List<SimpleClassOutput> outputs = new ArrayList<>(simpleClassByTeacherNo.size());
+        simpleClassByTeacherNo.forEach(classDataDto -> {
+            SimpleClassOutput output = new SimpleClassOutput();
+            output.setClassId(classDataDto.getId());
+            output.setClassName(classDataDto.getName());
+            output.setClassCode(classDataDto.getClassCode());
+            output.setTotalStudentNum(classDataDto.getTotalStudentNum());
+            outputs.add(output);
+        });
+        return outputs;
     }
 
 
