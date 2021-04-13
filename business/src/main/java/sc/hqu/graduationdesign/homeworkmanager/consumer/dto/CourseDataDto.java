@@ -20,4 +20,12 @@ public class CourseDataDto {
     private List<CourseElectionData> courseElectionData;
     private List<SimpleFileDataDto> courseFiles;
 
+    public CourseDataDto(Long id,String name,String classTime){
+        this.id = id;
+        this.name = name;
+        this.classTime = classTime;
+    }
+
+    public CourseDataDto(){}
+
 }

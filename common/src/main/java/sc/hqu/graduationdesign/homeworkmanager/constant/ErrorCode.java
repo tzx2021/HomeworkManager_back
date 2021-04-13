@@ -32,7 +32,8 @@ public enum ErrorCode {
     VERIFY_CODE_EXPIRED(604,"短信验证码已过期"),
     WRONG_PASS(605,"登录密码错误"),
     INVALID_VERIFY_CODE(606,"验证码无效"),
-    WRONG_BIND_PHONE(607,"绑定手机号错误");
+    WRONG_BIND_PHONE(607,"绑定手机号错误"),
+    DUPLICATE_STUDENT(608,"导入的学生中包含已加入当前或其他班级的学生，一个学生只能加入一个班级！");
 
     private final Integer code;
     private final String desc;

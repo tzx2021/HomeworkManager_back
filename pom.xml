@@ -22,7 +22,7 @@
         <module>web-api</module>
         <module>common</module>
         <module>data-access</module>
-        <module>spi</module>
+        <!--<module>spi</module>-->
     </modules>
 
     <properties>
@@ -142,7 +142,5 @@
         </dependency>
 
     </dependencies>
-
-
 
 </project>

@@ -28,6 +28,13 @@ public interface StudentDao {
     List<ClassStudentView> querySimpleInfoByClassIdInView(Long cid);
 
     /**
+     * 查询所有学生的学号
+     * @return          学生学号的集合
+     */
+    @Select("select student_no from t_student")
+    List<Long> queryAllStudentNoExisted();
+
+    /**
      * 通过学生学号集合查询班级学生的简易信息
      * @param studentNoList     学生学号
      * @return                  {@link ClassStudentView}
@@ -49,7 +56,7 @@ public interface StudentDao {
      */
     @EnableInterception
     @Select("select class_id,student_no,class_name,name,gender,contact,email,social_account from v_class_student where class_id in(" +
-            "select class_id from t_class where head_teacher_no=#{teacherNo}" +
+            "select id from t_class where head_teacher_no=#{teacherNo}" +
             ")")
     List<ClassStudentView> queryAllStudentByTeacherNo(Long teacherNo);
 

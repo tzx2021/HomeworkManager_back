@@ -25,6 +25,17 @@ public interface CourseDao {
     List<CourseEntity> queryAllByTeacherNo(Long tNo);
 
     /**
+     * 选取一个学生在教师发布的所有课程中为选取的课程
+     * @param teacherNo         教工号
+     * @param studentNo         学号
+     * @return                  {@link CourseEntity}
+     */
+    @Select("select tc.id,tc.name,class_time from t_course tc,t_teacher_course ttc where " +
+            "ttc.course_id = tc.id and ttc.teacher_no=#{teacherNo} " +
+            "and tc.id not in (select course_id from t_student_course where student_no=#{studentNo})")
+    List<CourseEntity> querySelectableByStudentNo(Long teacherNo,Long studentNo);
+
+    /**
      * 插入课程信息记录
      * @param ce        {@link CourseEntity}
      */

@@ -76,14 +76,16 @@ public interface ClassService {
 
     /**
      * 批量添加学生
-     * @param dto       {@link ClassStudentAddDto}
+     * @param dto                   {@link ClassStudentAddDto}
+     * @throws BusinessException    当一个学生重复加入班级或加入其他班级时，抛出该异常
      */
-    void batchAddStudent(ClassStudentAddDto dto);
+    void batchAddStudent(ClassStudentAddDto dto) throws BusinessException;
 
     /**
      * 将学生从班级中移除
+     * @param classId       班级id
      * @param studentNo     学号
      */
-    void removeClassStudent(Long studentNo);
+    void removeClassStudent(Long classId,Long studentNo);
 
 }

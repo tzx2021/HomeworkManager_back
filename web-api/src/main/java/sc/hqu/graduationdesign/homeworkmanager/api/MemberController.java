@@ -75,8 +75,7 @@ public class MemberController {
     @ApiOperation(value = "班级成员删除")
     @PostMapping(value = "/delete")
     public GenericResponse deleteMember(@RequestBody DeleteMemberInput input){
-        System.out.println(input);
-        classService.removeClassStudent(input.getStudentNo());
+        classService.removeClassStudent(input.getClassId(),input.getStudentNo());
         return GenericResponse.success();
     }
 

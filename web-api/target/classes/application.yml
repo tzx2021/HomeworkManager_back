@@ -8,9 +8,9 @@ spring:
   #数据库配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/homework_manager?characterEncoding=utf-8&useSSL=false&useLocalSessionState=true&serverTimezone=Asia/Shanghai
-    username: root
-    password: mysql
+    url: jdbc:mysql://${MYSQL_HOST}:3306/homework_manager?characterEncoding=utf-8&useSSL=false&useLocalSessionState=true&serverTimezone=Asia/Shanghai
+    username: ${MYSQL_USR}
+    password: ${MYSQL_PASS}
     type: com.alibaba.druid.pool.DruidDataSource
     dbcp2:
       min-idle: 5                                           # 数据库连接池的最小维持连接数

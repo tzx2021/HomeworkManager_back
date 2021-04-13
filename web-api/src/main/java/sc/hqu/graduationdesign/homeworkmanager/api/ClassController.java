@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import sc.hqu.graduationdesign.homeworkmanager.constant.ErrorCode;
 import sc.hqu.graduationdesign.homeworkmanager.consumer.dto.*;
 import sc.hqu.graduationdesign.homeworkmanager.consumer.service.ClassService;
 import sc.hqu.graduationdesign.homeworkmanager.exception.BusinessException;
@@ -137,8 +138,7 @@ public class ClassController {
 
     @ApiOperation(value = "导入班级成员")
     @PostMapping(value = "/member/add")
-    public GenericResponse addMember(@RequestBody AddClassMemberInput input){
-        System.out.println(input);
+    public GenericResponse addMember(@RequestBody AddClassMemberInput input) {
         ClassStudentAddDto addDto = new ClassStudentAddDto();
         addDto.setClassId(input.getClassId());
         List<ClassMemberInfoInput> memberList = input.getMemberList();
@@ -155,7 +155,11 @@ public class ClassController {
             addDto.setStudentDtoList(studentDtoList);
             addDto.setStudentParentDtoList(studentParentDtoList);
         });
-        classService.batchAddStudent(addDto);
+        try {
+            classService.batchAddStudent(addDto);
+        } catch (BusinessException e) {
+            return GenericResponse.error(ErrorCode.DUPLICATE_STUDENT);
+        }
         return GenericResponse.success();
     }
 

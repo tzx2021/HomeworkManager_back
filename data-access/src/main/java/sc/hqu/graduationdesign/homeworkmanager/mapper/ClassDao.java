@@ -53,7 +53,16 @@ public interface ClassDao {
      * @param num       学生总数
      */
     @Update("update t_class set total_student_num=total_student_num+#{num} where id=#{id}")
-    void updateClassStudentNum(@Param("id") Long id, @Param("num") Integer num);
+    void updateClassStudentNumByClassId(@Param("id") Long id, @Param("num") Integer num);
+
+    /**
+     * 根据学生学号更新班级学生数
+     * @param studentNo     学生学号
+     */
+    @Update("update t_class set total_student_num=total_student_num-1 where id=(" +
+            "select class_id from t_student where student_no=#{studentNo}"+
+            ")")
+    void reduceClassStudentNumByStudentNo(Long studentNo);
 
     /**
      * 删除班级信息

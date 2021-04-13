@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import sc.hqu.graduationdesign.homeworkmanager.constant.ErrorCode;
 import sc.hqu.graduationdesign.homeworkmanager.exception.ApiException;
@@ -16,7 +17,7 @@ import sc.hqu.graduationdesign.homeworkmanager.model.GenericResponse;
  * @author tzx
  * @date 2021-04-07 21:25
  */
-@Component
+@ControllerAdvice
 public class GlobalExceptionHandler {
 
 

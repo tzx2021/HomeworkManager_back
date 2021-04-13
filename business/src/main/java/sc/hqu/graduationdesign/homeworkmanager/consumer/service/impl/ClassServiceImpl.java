@@ -158,21 +158,21 @@ public class ClassServiceImpl implements ClassService {
 
     @Override
     @Transactional(rollbackFor = {Exception.class,RuntimeException.class})
-    public void batchAddStudent(ClassStudentAddDto dto) {
-        // 先查询当前班级所有学生的学号，
+    public void batchAddStudent(ClassStudentAddDto dto) throws BusinessException {
+        // 先查询当前班级所有学生的学号
         Long classId = dto.getClassId();
-        List<ClassStudentView> classStudentViews = studentDao.querySimpleInfoByClassIdInView(classId);
-        List<Long> existedStudentNo = classStudentViews.stream().map(ClassStudentView::getStudentNo).collect(Collectors.toList());
+        List<Long> existedStudentNo = studentDao.queryAllStudentNoExisted();
+        // 学生与班级的关系是一对一，不允许一个学生加入多个班级
+        List<Long> collect = dto.getStudentDtoList().stream().map(ClassStudentDto::getStudentNo).collect(Collectors.toList());
+        for (Long studentNo:collect){
+            if (existedStudentNo.contains(studentNo)){
+                throw new BusinessException(ErrorCode.DUPLICATE_STUDENT);
+            }
+        }
         //对导入学生的基于学号进行去重
-        List<ClassStudentDto> studentDtoList = dto.getStudentDtoList().stream()
-                // 将重复的学生基于学号过滤掉
-                .filter(classStudentDto -> !existedStudentNo.contains(classStudentDto.getStudentNo()))
-                .collect(Collectors.toList());
+        List<ClassStudentDto> studentDtoList = dto.getStudentDtoList();
         // 学生家长信息也需要去重
-        List<StudentParentDto> studentParentDtoList = dto.getStudentParentDtoList().stream()
-                .filter(studentParentDto -> !existedStudentNo.contains(studentParentDto.getStudentNo()))
-                .collect(Collectors.toList());
-        // 如果去重后仍有剩余数据那么进行保存
+        List<StudentParentDto> studentParentDtoList = dto.getStudentParentDtoList();
         if (studentDtoList.size() > 0){
             List<StudentEntity> studentEntities = new ArrayList<>(studentDtoList.size());
             List<ParentEntity> parentEntities = new ArrayList<>(studentParentDtoList.size() * 2);
@@ -201,13 +201,19 @@ public class ClassServiceImpl implements ClassService {
             // 批量保存家长记录
             parentDao.batchInsertParent(parentEntities);
             // 更新班级总学生数
-            classDao.updateClassStudentNum(classId,studentEntities.size());
+            classDao.updateClassStudentNumByClassId(classId,studentEntities.size());
         }
     }
 
+
     @Override
-    public void removeClassStudent(Long studentNo) {
-        // 移除学生使用将classId置为0的方式，不删除学生记录
+    @Transactional(rollbackFor = {Exception.class,RuntimeException.class})
+    public void removeClassStudent(Long classId,Long studentNo) {
+        // classId暂时不需要
+        // 先根据学号同步该生所有班级的学生人数
+        classDao.reduceClassStudentNumByStudentNo(studentNo);
+        // 删除学生记录
         studentDao.deleteStudentFromClass(studentNo);
+
     }
 }

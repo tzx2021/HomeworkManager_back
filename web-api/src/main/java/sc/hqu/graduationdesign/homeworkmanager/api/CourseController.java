@@ -4,23 +4,25 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import sc.hqu.graduationdesign.homeworkmanager.consumer.dto.*;
 import sc.hqu.graduationdesign.homeworkmanager.consumer.service.CourseService;
+import sc.hqu.graduationdesign.homeworkmanager.entity.StudentCourseEntity;
 import sc.hqu.graduationdesign.homeworkmanager.model.GenericResponse;
 import sc.hqu.graduationdesign.homeworkmanager.utils.SecurityContextUtil;
 import sc.hqu.graduationdesign.homeworkmanager.utils.TimeFormatUtil;
-import sc.hqu.graduationdesign.homeworkmanager.vo.input.CreateCourseInput;
-import sc.hqu.graduationdesign.homeworkmanager.vo.input.DeleteCourseInput;
-import sc.hqu.graduationdesign.homeworkmanager.vo.input.UpdateCourseInput;
+import sc.hqu.graduationdesign.homeworkmanager.vo.input.*;
+import sc.hqu.graduationdesign.homeworkmanager.vo.output.AvailableCourseDataOutput;
 import sc.hqu.graduationdesign.homeworkmanager.vo.output.CourseMetaDataOutput;
 import sc.hqu.graduationdesign.homeworkmanager.vo.output.SimpleFileOutput;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author tzx
@@ -92,6 +94,28 @@ public class CourseController {
     @PostMapping(value = "/delete")
     public GenericResponse deleteCourse(@RequestBody DeleteCourseInput input){
         courseService.deleteCourse(input.getCourseId());
+        return GenericResponse.success();
+    }
+
+    @ApiOperation(value = "学生可选课程信息获取")
+    @PostMapping(value = "/selectable")
+    public List<AvailableCourseDataOutput> getStudentAvailableCourseData(@RequestBody StudentNoInput input){
+        Long teacherNo = Long.valueOf(SecurityContextUtil.userDetails().getUsername());
+        return courseService.getStudentSelectableCourse(input.getStudentNo(), teacherNo).stream()
+                .map(dto -> new AvailableCourseDataOutput(dto.getId(), dto.getName(), dto.getClassTime()))
+                .collect(Collectors.toList());
+    }
+
+    @ApiOperation(value = "学生选课")
+    @PostMapping(value = "/selecting")
+    public GenericResponse studentCourseSelecting(@RequestBody CourseSelectingInput input){
+        courseService.selectCourse(input.getCourseSelectList().stream()
+                .map(courseSelect -> {
+                    StudentCourseEntity sce = new StudentCourseEntity();
+                    sce.setCourseId(courseSelect.getCourseId());
+                    sce.setStudentNo(courseSelect.getStudentNo());
+                    return sce;
+                }).collect(Collectors.toList()));
         return GenericResponse.success();
     }
 

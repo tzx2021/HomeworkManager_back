@@ -8,6 +8,7 @@ import sc.hqu.graduationdesign.homeworkmanager.constant.FilePublishType;
 import sc.hqu.graduationdesign.homeworkmanager.consumer.dto.*;
 import sc.hqu.graduationdesign.homeworkmanager.consumer.service.CourseService;
 import sc.hqu.graduationdesign.homeworkmanager.entity.CourseEntity;
+import sc.hqu.graduationdesign.homeworkmanager.entity.StudentCourseEntity;
 import sc.hqu.graduationdesign.homeworkmanager.entity.TeacherCourseEntity;
 import sc.hqu.graduationdesign.homeworkmanager.mapper.CourseDao;
 import sc.hqu.graduationdesign.homeworkmanager.mapper.FileDao;
@@ -18,6 +19,7 @@ import sc.hqu.graduationdesign.homeworkmanager.utils.SecurityContextUtil;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author tzx
@@ -71,6 +73,13 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    public List<CourseDataDto> getStudentSelectableCourse(Long studentNo, Long teacherNo) {
+        return courseDao.querySelectableByStudentNo(teacherNo, studentNo).stream()
+                .map(courseEntity -> new CourseDataDto(courseEntity.getId(), courseEntity.getName(), courseEntity.getClassTime()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     @Transactional(rollbackFor = {RuntimeException.class,Exception.class})
     public CourseCreateDto create(CourseCreateDto courseCreateDto) {
         CourseEntity courseEntity = new CourseEntity();
@@ -99,5 +108,11 @@ public class CourseServiceImpl implements CourseService {
     public void deleteCourse(Long courseId) {
         // 前端需要控制已被学生选课的课程无法删除
         courseDao.deleteCourseById(courseId);
+    }
+
+    @Override
+    @Transactional(rollbackFor = {Exception.class,RuntimeException.class})
+    public void selectCourse(List<StudentCourseEntity> studentCourseEntities) {
+        studentCourseDao.batchInsertStudentCourse(studentCourseEntities);
     }
 }

@@ -3,6 +3,7 @@ package sc.hqu.graduationdesign.homeworkmanager.consumer.service;
 import sc.hqu.graduationdesign.homeworkmanager.consumer.dto.CourseCreateDto;
 import sc.hqu.graduationdesign.homeworkmanager.consumer.dto.CourseDataDto;
 import sc.hqu.graduationdesign.homeworkmanager.consumer.dto.CourseUpdateDto;
+import sc.hqu.graduationdesign.homeworkmanager.entity.StudentCourseEntity;
 
 import java.util.List;
 
@@ -19,6 +20,14 @@ public interface CourseService {
      * @return                  {@link CourseDataDto}
      */
     List<CourseDataDto> getCourseDataByTeacherNo(Long teacherNo);
+
+    /**
+     * 获取学生可选的课程
+     * @param studentNo         学号
+     * @param teacherNo          教工号
+     * @return                  {@link CourseDataDto}
+     */
+    List<CourseDataDto> getStudentSelectableCourse(Long studentNo, Long teacherNo);
 
     /**
      * 课程创建
@@ -38,5 +47,11 @@ public interface CourseService {
      * @param courseId          课程id
      */
     void deleteCourse(Long courseId);
+
+    /**
+     * 学生选课
+     * @param studentCourseEntities     学生课程管理记录实体对象
+     */
+    void selectCourse(List<StudentCourseEntity> studentCourseEntities);
 
 }
